@@ -85,11 +85,14 @@ a {
 /* HERO */
 
 .hero {
-  min-height: calc(100vh - 164px);
-  display: grid;
-  align-items: center;
-  padding: 82px 42px;
   position: relative;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 40px;
+  border: 1px solid rgba(184,154,88,0.2);
 }
 
 .hero::before {
@@ -101,11 +104,7 @@ a {
 }
 
 .hero-inner {
-  max-width: 1040px;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
-  z-index: 1;
+  padding-top: 60px;
 }
 
 .eyebrow {
