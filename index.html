@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Črnilo Sever — Tattoo Studio Maribor</title>
+<title>Črnilo Ink — Tattoo Studio Maribor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
@@ -11,16 +11,16 @@
 <style>
 /* ─── TOKENS ────────────────────────────────────────── */
 :root {
-  --bg:          #080e08;
-  --deep:        #050b05;
-  --surface:     #0e190d;
-  --surface2:    #0a1409;
+  --bg:          #090909;
+  --deep:        #060606;
+  --surface:     #111111;
+  --surface2:    #0d0d0d;
   --crimson:     #5c0e1a;
   --crimson2:    #7a1524;
   --gold:        #a8833a;
   --gold-pale:   #c9a85c;
-  --text:        #eef2e8;
-  --dim:         #a8b89e;
+  --text:        #eeece8;
+  --dim:         #a8a49e;
   --line:        rgba(255,255,255,0.058);
   --line-gold:   rgba(169,131,58,0.2);
   --line-crim:   rgba(92,14,26,0.5);
@@ -37,7 +37,7 @@ body {
       92deg,
       rgba(255,255,255,0.000) 0px,
       rgba(255,255,255,0.000) 2px,
-      rgba(150,190,130,0.012) 3px,
+      rgba(255,255,255,0.008) 3px,
       rgba(255,255,255,0.000) 4px
     );
   color: var(--text);
@@ -86,7 +86,7 @@ body::after {
       rgba(255,255,255,0.000) 3px
     ),
     url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.072;
+  opacity: 0.088;
   pointer-events: none;
   z-index: 9999;
 }
@@ -96,7 +96,7 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 35%, rgba(3,8,3,0.82) 100%);
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.88) 100%);
   pointer-events: none;
   z-index: 9998;
 }
@@ -149,7 +149,7 @@ body::before {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--line);
-  background: rgba(6,11,6,0.76);
+  background: rgba(6,6,6,0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
@@ -190,13 +190,16 @@ nav a {
   font-family: 'Cinzel', serif;
   font-weight: 400;
   font-size: 9px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.48em;
   text-transform: uppercase;
-  color: var(--dim);
-  transition: color .35s;
+  color: var(--text);
+  transition: color .35s, letter-spacing .4s cubic-bezier(.16,1,.3,1);
 }
 
-nav a:hover { color: var(--gold-pale); }
+nav a:hover {
+  color: var(--gold-pale);
+  letter-spacing: 0.58em;
+}
 
 nav .nav-cta {
   color: var(--gold);
@@ -216,7 +219,7 @@ nav .nav-cta:hover {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 0 60px 84px;
+  padding: 90px 60px 84px;
   position: relative;
   overflow: hidden;
 }
@@ -226,9 +229,9 @@ nav .nav-cta:hover {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 55% 50% at 72% 38%, rgba(22,56,22,0.38) 0%, transparent 70%),
-    radial-gradient(ellipse 35% 55% at 18% 72%, rgba(169,131,58,0.065) 0%, transparent 65%),
-    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(8,26,8,0.55) 0%, transparent 60%);
+    radial-gradient(ellipse 55% 50% at 72% 38%, rgba(92,14,26,0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 35% 55% at 18% 72%, rgba(169,131,58,0.06) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(0,0,0,0.55) 0%, transparent 60%);
   animation: breathe 12s ease-in-out infinite;
 }
 
@@ -390,6 +393,7 @@ nav .nav-cta:hover {
   border-top: none;
   position: relative;
   overflow: hidden;
+  scroll-margin-top: 90px;
 }
 
 .section-inner {
@@ -692,7 +696,7 @@ footer {
 .curtain {
   position: fixed;
   inset: 0;
-  background: #040904;
+  background: #060606;
   z-index: 8000;
   display: flex;
   flex-direction: column;
@@ -834,13 +838,24 @@ footer {
   .cursor, .cursor-dot { display: none; }
 
   .header {
-    padding: 18px 22px;
+    padding: 16px 20px;
+  }
+
+  .logo-name {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+  }
+
+  .nav-cta {
+    font-size: 10px;
+    padding: 9px 16px;
+    letter-spacing: 0.18em;
   }
 
   .nav-links { display: none; }
 
   .hero {
-    padding: 0 22px 64px;
+    padding: 90px 22px 60px;
   }
 
   .hero-ghost { display: none; }
@@ -856,7 +871,13 @@ footer {
     flex-direction: column;
   }
 
-  .btn { width: 100%; justify-content: center; }
+  .btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 11px;
+    height: 56px;
+    letter-spacing: 0.18em;
+  }
 
   .pillars {
     grid-template-columns: 1fr;
@@ -885,7 +906,7 @@ footer {
 <div class="curtain" id="curtain">
   <div class="curtain-rule"></div>
   <div class="curtain-sigil">Č</div>
-  <span class="curtain-name">Črnilo Sever</span>
+  <span class="curtain-name">Črnilo Ink</span>
   <div class="curtain-rule"></div>
 </div>
 
@@ -897,7 +918,7 @@ footer {
 <header class="header">
   <div class="logo-block">
     <div class="logo-sigil">Č</div>
-    <span class="logo-name">Črnilo Sever</span>
+    <span class="logo-name">Črnilo Ink</span>
   </div>
 
   <nav>
@@ -929,7 +950,7 @@ footer {
 
   <div class="hero-foot reveal" style="transition-delay:.65s">
     <p class="hero-lead">
-      Črnilo Sever je zaseben studio za avtorske motive, temne ornamente, fine linije in prekrivanja. Vsak motiv se najprej preveri. Šele nato dobi mesto na koži.
+      Črnilo Ink je zaseben studio za avtorske motive, temne ornamente, fine linije in prekrivanja. Vsak motiv se najprej preveri. Šele nato dobi mesto na koži.
     </p>
     <div class="hero-actions">
       <a href="#narocanje" class="btn">Rezerviraj posvet</a>
@@ -1210,7 +1231,7 @@ footer {
       </div>
       <div class="contact-cell">
         <dt>Elektronska pošta</dt>
-        <dd>info@crnilosever.si</dd>
+        <dd>info@crniloink.si</dd>
       </div>
       <div class="contact-cell">
         <dt>Telefon</dt>
@@ -1222,7 +1243,7 @@ footer {
 
 <!-- ─── FOOTER ────────────────────────────────────────── -->
 <footer>
-  <span class="footer-copy">Črnilo Sever &middot; Maribor &middot; Zaseben tattoo salon</span>
+  <span class="footer-copy">Črnilo Ink &middot; Maribor &middot; Zaseben tattoo salon</span>
   <div class="footer-sigil">Č</div>
 </footer>
 
