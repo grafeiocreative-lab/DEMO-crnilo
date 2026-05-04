@@ -3,398 +3,1285 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Črnilo Sever</title>
+<title>Črnilo Sever — Tattoo Studio Maribor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
+/* ─── TOKENS ────────────────────────────────────────── */
 :root {
-  --bg: #111111;
-  --black: #080808;
-  --panel: #151515;
-  --line: rgba(184,154,88,0.28);
-  --text: #f1eadc;
-  --muted: #b8ac99;
-  --gold: #b89a58;
+  --bg:          #080e08;
+  --deep:        #050b05;
+  --surface:     #0e190d;
+  --surface2:    #0a1409;
+  --crimson:     #5c0e1a;
+  --crimson2:    #7a1524;
+  --gold:        #a8833a;
+  --gold-pale:   #c9a85c;
+  --text:        #eef2e8;
+  --dim:         #a8b89e;
+  --line:        rgba(255,255,255,0.058);
+  --line-gold:   rgba(169,131,58,0.2);
+  --line-crim:   rgba(92,14,26,0.5);
+  --line-green:  rgba(120,160,100,0.1);
 }
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
 
 body {
-  margin: 0;
   background: var(--bg);
+  background-image:
+    repeating-linear-gradient(
+      92deg,
+      rgba(255,255,255,0.000) 0px,
+      rgba(255,255,255,0.000) 2px,
+      rgba(150,190,130,0.012) 3px,
+      rgba(255,255,255,0.000) 4px
+    );
   color: var(--text);
-  font-family: Arial, sans-serif;
+  font-family: 'IM Fell English', Georgia, serif;
+  font-weight: 400;
+  line-height: 1.6;
+  cursor: none;
+  overflow-x: hidden;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+a { color: inherit; text-decoration: none; }
+
+/* ─── CUSTOM CURSOR ─────────────────────────────────── */
+.cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 10px; height: 10px;
+  border: 1px solid var(--gold-pale);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: exclusion;
+  transition: width .3s cubic-bezier(.16,1,.3,1), height .3s cubic-bezier(.16,1,.3,1);
+}
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 2px; height: 2px;
+  background: var(--gold-pale);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10001;
 }
 
-/* CEREMONIAL HEADER */
+/* ─── BRUSHED MATTE TEXTURE ──────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255,255,255,0.000) 0px,
+      rgba(255,255,255,0.000) 1px,
+      rgba(255,255,255,0.009) 2px,
+      rgba(255,255,255,0.000) 3px
+    ),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.072;
+  pointer-events: none;
+  z-index: 9999;
+}
 
+/* ─── VIGNETTE ──────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(3,8,3,0.82) 100%);
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ─── SCROLLBAR ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--crimson); }
+
+/* ─── ANIMATIONS ────────────────────────────────────── */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  28%       { opacity: 0.86; }
+  54%       { opacity: 0.93; }
+  72%       { opacity: 0.82; }
+  88%       { opacity: 0.94; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1);   opacity: 0.5; }
+  50%       { transform: scale(1.03); opacity: 0.65; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 1.2s cubic-bezier(.16,1,.3,1), transform 1.2s cubic-bezier(.16,1,.3,1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ─── EYEBROW ───────────────────────────────────────── */
+.eyebrow {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+}
+
+/* ─── HEADER ────────────────────────────────────────── */
 .header {
-  background: var(--black);
-  border-bottom: 1px solid var(--line);
-  padding: 26px 42px 20px;
-}
-
-.logo-wrap {
-  display: grid;
-  place-items: center;
-  gap: 10px;
-}
-
-.logo-mark {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-family: Didot, "Bodoni MT", Georgia, serif;
-  font-size: 24px;
-}
-
-.logo {
-  font-family: Didot, "Bodoni MT", Georgia, serif;
-  font-size: 24px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-}
-
-.nav {
-  margin-top: 24px;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 26px 54px;
   display: flex;
-  justify-content: center;
-  gap: 34px;
-  color: var(--muted);
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  background: rgba(6,11,6,0.76);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.logo-block {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.logo-sigil {
+  width: 36px; height: 36px;
+  border: 1px solid var(--gold);
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  font-style: italic;
+  font-size: 18px;
+  animation: flicker 7s ease-in-out infinite;
+}
+
+.logo-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
+  color: var(--text);
 }
 
-.nav a:hover {
+nav {
+  display: flex;
+  gap: 38px;
+  align-items: center;
+}
+
+nav a {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+  transition: color .35s;
+}
+
+nav a:hover { color: var(--gold-pale); }
+
+nav .nav-cta {
   color: var(--gold);
+  border: 1px solid var(--line-gold);
+  padding: 10px 24px;
+  transition: background .35s, color .35s;
 }
 
-.nav .cta {
-  color: var(--gold);
+nav .nav-cta:hover {
+  background: var(--gold);
+  color: #07040a;
 }
 
-/* HERO */
-
+/* ─── HERO ──────────────────────────────────────────── */
 .hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 60px 84px;
   position: relative;
+  overflow: hidden;
 }
 
-.hero::before {
-  content: "";
+.hero-ambient {
   position: absolute;
-  inset: 40px;
-  border: 1px solid rgba(184,154,88,0.2);
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 50% at 72% 38%, rgba(22,56,22,0.38) 0%, transparent 70%),
+    radial-gradient(ellipse 35% 55% at 18% 72%, rgba(169,131,58,0.065) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(8,26,8,0.55) 0%, transparent 60%);
+  animation: breathe 12s ease-in-out infinite;
 }
 
-.hero::before {
-  content: "";
+.hero-ghost {
   position: absolute;
-  inset: 42px;
-  border: 1px solid rgba(184,154,88,0.16);
+  top: 50%;
+  right: 50px;
+  transform: translateY(-50%);
+  font-family: 'IM Fell English', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(180px, 25vw, 360px);
+  color: rgba(255,255,255,0.018);
+  line-height: 1;
+  letter-spacing: -0.06em;
+  user-select: none;
   pointer-events: none;
 }
 
-.hero-inner {
-  padding-top: 60px;
-}
-
-.eyebrow {
-  margin-bottom: 28px;
-  color: var(--gold);
-  font-size: 10px;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0 auto;
-  max-width: 980px;
-  font-family: Didot, "Bodoni MT", Georgia, serif;
-  font-size: clamp(56px, 9vw, 132px);
-  line-height: 0.86;
+.hero-label {
+  font-family: 'Cinzel', serif;
   font-weight: 400;
-  letter-spacing: -0.018em;
+  font-size: 9px;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 36px;
 }
 
-.lead {
-  max-width: 650px;
-  margin: 34px auto 0;
-  color: var(--muted);
-  font-size: 19px;
-  line-height: 1.65;
+.hero-title {
+  font-family: 'IM Fell English', serif;
+  font-weight: 400;
+  font-size: clamp(72px, 11vw, 162px);
+  line-height: 0.87;
+  letter-spacing: -0.032em;
+  color: var(--text);
+  max-width: 1160px;
+  position: relative;
 }
 
-.actions {
-  margin-top: 42px;
+.hero-title em {
+  font-style: italic;
+  color: var(--gold-pale);
+  display: block;
+  animation: flicker 9s ease-in-out infinite;
+}
+
+.hero-foot {
+  margin-top: 58px;
   display: flex;
-  justify-content: center;
-  gap: 14px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
 }
 
-.button {
-  min-height: 54px;
-  padding: 0 28px;
+.hero-lead {
+  max-width: 420px;
+  color: var(--dim);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.78;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ─── BUTTONS ───────────────────────────────────────── */
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--gold);
-  background: var(--gold);
-  color: #111;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.24em;
+  height: 52px;
+  padding: 0 34px;
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-}
-
-.button.secondary {
-  background: transparent;
+  border: 1px solid var(--line-gold);
   color: var(--text);
-  border-color: var(--line);
+  transition: background .35s, border-color .35s, color .35s;
+  cursor: none;
 }
 
-.button.secondary:hover {
-  color: var(--gold);
+.btn:hover {
+  background: var(--gold);
   border-color: var(--gold);
+  color: #07040a;
 }
 
-/* SECTIONS */
+.btn-ghost {
+  border-color: rgba(92,14,26,0.85);
+  color: var(--text);
+}
 
-.section {
-  padding: 86px 42px;
+.btn-ghost:hover {
+  background: var(--crimson2);
+  border-color: var(--crimson2);
+  color: var(--text);
+}
+
+/* ─── PILLARS ───────────────────────────────────────── */
+.pillars {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr 1px 1fr;
   border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
-.section-inner {
-  max-width: 1060px;
-  margin: 0 auto;
+.pillar-sep {
+  background: var(--line);
+}
+
+.pillar {
+  padding: 76px 48px;
   text-align: center;
 }
 
-h2 {
-  margin: 0 auto;
-  max-width: 800px;
-  font-family: Didot, "Bodoni MT", Georgia, serif;
-  font-size: clamp(42px, 6vw, 82px);
-  line-height: 0.92;
+.pillar-num {
+  display: block;
+  font-family: 'Cinzel', serif;
   font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  color: var(--crimson2);
+  margin-bottom: 34px;
+}
+
+.pillar-icon {
+  display: block;
+  margin: 0 auto 28px;
+  opacity: 0.72;
+}
+
+.pillar h3 {
+  font-family: 'IM Fell English', serif;
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--text);
 }
 
-.text {
-  max-width: 680px;
-  margin: 26px auto 0;
-  color: var(--muted);
+.pillar p {
+  margin-top: 14px;
+  color: var(--dim);
+  font-size: 16px;
+  max-width: 210px;
+  margin-inline: auto;
+  line-height: 1.75;
+}
+
+/* ─── SECTION BASE ──────────────────────────────────── */
+.section {
+  padding: 108px 60px;
+  border-top: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.section.c { text-align: center; }
+
+.section h2 {
+  font-family: 'IM Fell English', serif;
+  font-weight: 400;
+  font-size: clamp(46px, 6.5vw, 90px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+  max-width: 860px;
+  margin-inline: auto;
+}
+
+.section h2 em {
+  font-style: italic;
+  color: var(--gold-pale);
+  animation: flicker 11s ease-in-out infinite;
+}
+
+.section-text {
+  max-width: 580px;
+  margin: 28px auto 0;
+  color: var(--dim);
   font-size: 18px;
-  line-height: 1.65;
+  line-height: 1.82;
 }
 
+/* ─── STUDIO SPLIT ──────────────────────────────────── */
+.studio-split {
+  margin-top: 72px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.studio-text p {
+  color: var(--dim);
+  font-size: 18px;
+  line-height: 1.9;
+  margin-bottom: 22px;
+}
+
+.studio-text p:last-child { margin-bottom: 0; }
+
+.studio-frame {
+  border: 1px solid var(--line-gold);
+  padding: 2px;
+  aspect-ratio: 4 / 5;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.4);
+}
+
+.studio-frame::before {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border: 1px solid var(--line);
+  pointer-events: none;
+}
+
+.studio-frame span {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ─── CARDS ─────────────────────────────────────────── */
 .cards {
-  margin-top: 44px;
+  margin-top: 60px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
-  text-align: left;
 }
 
 .card {
-  background: var(--panel);
-  padding: 30px;
+  background: var(--surface);
+  padding: 50px 42px;
+  position: relative;
+  transition: background .4s;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.25);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px; height: 0;
+  background: linear-gradient(to bottom, var(--crimson2), transparent);
+  transition: height .6s cubic-bezier(.16,1,.3,1);
+}
+
+.card:hover { background: var(--surface2); }
+.card:hover::before { height: 100%; }
+
+.card-num {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.20em;
+  color: var(--crimson2);
+  margin-bottom: 26px;
 }
 
 .card h3 {
-  margin: 0;
-  font-family: Didot, "Bodoni MT", Georgia, serif;
-  font-size: 30px;
+  font-family: 'IM Fell English', serif;
   font-weight: 400;
+  font-size: 36px;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
 }
 
 .card p {
-  margin: 16px 0 0;
-  color: var(--muted);
-  line-height: 1.6;
+  margin-top: 18px;
+  color: var(--dim);
+  line-height: 1.78;
+  font-size: 17px;
 }
 
+/* ─── GALLERY ───────────────────────────────────────── */
+.gallery-void {
+  margin-top: 60px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 130px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.gallery-void::before,
+.gallery-void::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 1px solid var(--line);
+  pointer-events: none;
+}
+
+.gallery-void span {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 8px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ─── FORM ──────────────────────────────────────────── */
+.form {
+  max-width: 800px;
+  margin: 60px auto 0;
+  display: grid;
+  gap: 18px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+label {
+  display: grid;
+  gap: 10px;
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: 'IM Fell English', serif;
+  font-size: 17px;
+  font-weight: 400;
+  transition: border-color .3s;
+  appearance: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+textarea { min-height: 160px; resize: vertical; }
+
+select option { background: var(--surface); }
+
+.form-submit {
+  width: 100%;
+  height: 56px;
+  background: transparent;
+  border: 1px solid var(--line-gold);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  cursor: none;
+  transition: background .35s, color .35s, border-color .35s;
+}
+
+.form-submit:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #07040a;
+}
+
+/* ─── CONTACT ───────────────────────────────────────── */
+.contact-grid {
+  margin-top: 54px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.contact-cell {
+  background: var(--surface);
+  padding: 42px 38px;
+}
+
+.contact-cell dt {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.contact-cell dd {
+  font-size: 18px;
+  color: var(--text);
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+/* ─── FOOTER ────────────────────────────────────────── */
 footer {
-  padding: 38px 42px;
+  padding: 36px 60px;
   border-top: 1px solid var(--line);
-  color: var(--muted);
-  text-align: center;
-  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* MOBILE */
+.footer-copy {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
 
-@media(max-width: 820px) {
+.footer-sigil {
+  width: 28px; height: 28px;
+  border: 1px solid rgba(169,131,58,0.25);
+  display: grid;
+  place-items: center;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--gold);
+  opacity: 0.55;
+  animation: flicker 10s ease-in-out infinite;
+}
+
+/* ─── THEATRICAL CURTAIN ────────────────────────────── */
+.curtain {
+  position: fixed;
+  inset: 0;
+  background: #040904;
+  z-index: 8000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  transition: opacity 1.8s cubic-bezier(.7,0,.3,1) 1.2s,
+              visibility 0s linear 3s;
+}
+
+.curtain.open {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.curtain-sigil {
+  width: 80px; height: 80px;
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  font-size: 48px;
+  color: var(--gold);
+  opacity: 0;
+  transform: scale(0.88);
+  transition: opacity 0.9s ease 0.15s, transform 0.9s cubic-bezier(.16,1,.3,1) 0.15s;
+  animation: flicker 4s ease-in-out infinite 1s;
+  position: relative;
+}
+
+.curtain-sigil::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(169,131,58,0.22);
+}
+
+.curtain-name {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.9s ease 0.4s, transform 0.9s cubic-bezier(.16,1,.3,1) 0.4s;
+}
+
+.curtain-rule {
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-pale), transparent);
+  opacity: 0.35;
+  transition: width 0.9s cubic-bezier(.16,1,.3,1) 0.6s;
+}
+
+.curtain.loaded .curtain-sigil { opacity: 1; transform: scale(1); }
+.curtain.loaded .curtain-name  { opacity: 1; transform: translateY(0); }
+.curtain.loaded .curtain-rule  { width: 180px; }
+
+/* ─── MARQUEE BAND ──────────────────────────────────── */
+.marquee {
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--deep);
+  padding: 16px 0;
+}
+
+.marquee-inner {
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  animation: marquee-scroll 38s linear infinite;
+  width: max-content;
+}
+
+.marquee-inner span {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  padding: 0 32px;
+}
+
+.marquee-inner .m-word { color: var(--text); }
+.marquee-inner .m-dot  { color: var(--gold); }
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── ORNAMENTAL DIVIDER ────────────────────────────── */
+.orn-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+  height: 60px;
+  background: var(--bg);
+}
+
+.orn-divider svg { opacity: 0.55; }
+
+/* ─── SECTION GHOST NUMBER ──────────────────────────── */
+.section { position: relative; overflow: hidden; }
+
+.section-ghost {
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(180px, 22vw, 320px);
+  color: rgba(255,255,255,0.018);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: -0.05em;
+}
+
+/* ─── CARD TITLE HOVER ──────────────────────────────── */
+.card h3 {
+  transition: letter-spacing .6s cubic-bezier(.16,1,.3,1),
+              color .4s;
+}
+
+.card:hover h3 {
+  letter-spacing: 0.1em;
+  color: var(--gold-pale);
+}
+
+/* ─── MOBILE ────────────────────────────────────────── */
+@media (max-width: 880px) {
+  body { cursor: auto; }
+  .cursor, .cursor-dot { display: none; }
+
   .header {
-    padding: 22px 18px 18px;
+    padding: 18px 22px;
   }
 
-  .logo {
-    font-size: 18px;
-    letter-spacing: 0.18em;
-  }
-
-  .nav {
-    margin-top: 20px;
-    gap: 14px;
-    flex-wrap: wrap;
-    font-size: 9px;
-    letter-spacing: 0.16em;
-  }
+  .nav-links { display: none; }
 
   .hero {
-    min-height: auto;
-    padding: 58px 20px;
+    padding: 0 22px 64px;
   }
 
-  .hero::before {
-    inset: 18px;
+  .hero-ghost { display: none; }
+
+  .hero-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
   }
 
-  h1 {
-    font-size: clamp(54px, 16vw, 76px);
-    line-height: 0.9;
-  }
-
-  .actions {
-    display: grid;
-  }
-
-  .button {
+  .hero-actions {
     width: 100%;
+    flex-direction: column;
   }
 
-  .section {
-    padding: 64px 20px;
-  }
+  .btn { width: 100%; justify-content: center; }
 
-  .cards {
+  .pillars {
     grid-template-columns: 1fr;
   }
+
+  .pillar-sep { height: 1px; width: 100%; }
+  .pillar { padding: 58px 28px; }
+
+  .section { padding: 74px 22px; }
+
+  .studio-split { grid-template-columns: 1fr; gap: 44px; }
+
+  .cards { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
+
+  .contact-grid { grid-template-columns: 1fr; }
+
+  footer { padding: 30px 22px; flex-direction: column; gap: 18px; text-align: center; }
 }
 </style>
 </head>
 
 <body>
 
+<!-- ─── CURTAIN ───────────────────────────────────────── -->
+<div class="curtain" id="curtain">
+  <div class="curtain-rule"></div>
+  <div class="curtain-sigil">Č</div>
+  <span class="curtain-name">Črnilo Sever</span>
+  <div class="curtain-rule"></div>
+</div>
+
+<!-- cursors -->
+<div class="cursor"     id="js-cursor"></div>
+<div class="cursor-dot" id="js-dot"></div>
+
+<!-- ─── HEADER ─────────────────────────────────────── -->
 <header class="header">
-  <div class="logo-wrap">
-    <div class="logo-mark">Č</div>
-    <div class="logo">Črnilo Sever</div>
+  <div class="logo-block">
+    <div class="logo-sigil">Č</div>
+    <span class="logo-name">Črnilo Sever</span>
   </div>
 
-  <nav class="nav">
-    <a href="#studio">Studio</a>
-    <a href="#storitve">Storitve</a>
-    <a href="#galerija">Galerija</a>
-    <a href="#blog">Blog</a>
-    <a href="#kontakt">Kontakt</a>
-    <a class="cta" href="#narocanje">Vstopi</a>
+  <nav>
+    <span class="nav-links" style="display:flex;gap:38px;align-items:center">
+      <a href="#studio">Studio</a>
+      <a href="#storitve">Storitve</a>
+      <a href="#galerija">Galerija</a>
+      <a href="#blog">Blog</a>
+      <a href="#kontakt">Kontakt</a>
+    </span>
+    <a href="#narocanje" class="nav-cta">Rezerviraj</a>
   </nav>
 </header>
 
-<main>
-
+<!-- ─── HERO ────────────────────────────────────────── -->
 <section class="hero">
-  <div class="hero-inner">
-    <div class="eyebrow">Zasebni tattoo salon</div>
+  <div class="hero-ambient"></div>
+  <div class="hero-ghost">I</div>
 
-    <h1>Črnilo kot obred. Koža kot zapis.</h1>
+  <p class="hero-label reveal" style="transition-delay:.15s">
+    Zasebni tattoo salon &middot; Maribor
+  </p>
 
-    <p class="lead">
-      Črnilo Sever je zaseben tattoo studio za avtorske motive, temne ornamente, fine linije in prekrivanja. Vsak motiv se najprej preveri. Šele nato dobi mesto na koži.
+  <h1 class="hero-title reveal" style="transition-delay:.38s">
+    Črnilo kot<br>
+    <em>obred.</em>
+    Koža kot<br>zapis.
+  </h1>
+
+  <div class="hero-foot reveal" style="transition-delay:.65s">
+    <p class="hero-lead">
+      Črnilo Sever je zaseben studio za avtorske motive, temne ornamente, fine linije in prekrivanja. Vsak motiv se najprej preveri. Šele nato dobi mesto na koži.
     </p>
-
-    <div class="actions">
-      <a class="button" href="#narocanje">Rezerviraj posvet</a>
-      <a class="button secondary" href="#studio">Vstopi v studio</a>
+    <div class="hero-actions">
+      <a href="#narocanje" class="btn">Rezerviraj posvet</a>
+      <a href="#galerija"  class="btn btn-ghost">Poglej dela</a>
     </div>
   </div>
 </section>
+
+<!-- ─── MARQUEE ──────────────────────────────────────── -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-inner">
+    <span class="m-word">Posvet</span><span class="m-dot">·</span>
+    <span class="m-word">Igla</span><span class="m-dot">·</span>
+    <span class="m-word">Koža</span><span class="m-dot">·</span>
+    <span class="m-word">Črnilo</span><span class="m-dot">·</span>
+    <span class="m-word">Motiv</span><span class="m-dot">·</span>
+    <span class="m-word">Obred</span><span class="m-dot">·</span>
+    <span class="m-word">Zasebno</span><span class="m-dot">·</span>
+    <span class="m-word">Natančno</span><span class="m-dot">·</span>
+    <span class="m-word">Mirno</span><span class="m-dot">·</span>
+    <span class="m-word">Temno</span><span class="m-dot">·</span>
+    <span class="m-word">Posvet</span><span class="m-dot">·</span>
+    <span class="m-word">Igla</span><span class="m-dot">·</span>
+    <span class="m-word">Koža</span><span class="m-dot">·</span>
+    <span class="m-word">Črnilo</span><span class="m-dot">·</span>
+    <span class="m-word">Motiv</span><span class="m-dot">·</span>
+    <span class="m-word">Obred</span><span class="m-dot">·</span>
+    <span class="m-word">Zasebno</span><span class="m-dot">·</span>
+    <span class="m-word">Natančno</span><span class="m-dot">·</span>
+    <span class="m-word">Mirno</span><span class="m-dot">·</span>
+    <span class="m-word">Temno</span><span class="m-dot">·</span>
+  </div>
+</div>
+
+<!-- ─── PILLARS ──────────────────────────────────────── -->
+<div class="pillars">
+  <article class="pillar reveal">
+    <span class="pillar-num">I</span>
+    <svg class="pillar-icon" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="18" r="13" stroke="#a8833a" stroke-width="0.5"/>
+      <circle cx="18" cy="18" r="2" fill="#a8833a"/>
+      <line x1="18" y1="4"  x2="18" y2="8"  stroke="#a8833a" stroke-width="0.5"/>
+      <line x1="18" y1="28" x2="18" y2="32" stroke="#a8833a" stroke-width="0.5"/>
+      <line x1="4"  y1="18" x2="8"  y2="18" stroke="#a8833a" stroke-width="0.5"/>
+      <line x1="28" y1="18" x2="32" y2="18" stroke="#a8833a" stroke-width="0.5"/>
+    </svg>
+    <h3>Posvet</h3>
+    <p>Ideja se najprej razstavi. Motiv mora zdržati čas.</p>
+  </article>
+
+  <div class="pillar-sep"></div>
+
+  <article class="pillar reveal" style="transition-delay:.14s">
+    <span class="pillar-num">II</span>
+    <svg class="pillar-icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <line x1="18" y1="3"  x2="18" y2="33" stroke="#a8833a" stroke-width="0.5"/>
+      <circle cx="18" cy="5" r="2" fill="#a8833a"/>
+      <path d="M14 30 L18 34 L22 30" stroke="#a8833a" stroke-width="0.5" fill="none"/>
+      <line x1="13" y1="13" x2="23" y2="13" stroke="#a8833a" stroke-width="0.5"/>
+      <line x1="15" y1="18" x2="21" y2="18" stroke="#a8833a" stroke-width="0.5"/>
+    </svg>
+    <h3>Igla</h3>
+    <p>Izvedba je mirna, sterilna in natančna.</p>
+  </article>
+
+  <div class="pillar-sep"></div>
+
+  <article class="pillar reveal" style="transition-delay:.28s">
+    <span class="pillar-num">III</span>
+    <svg class="pillar-icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <rect x="7" y="7" width="22" height="22" stroke="#a8833a" stroke-width="0.5"/>
+      <rect x="11" y="11" width="14" height="14" stroke="#a8833a" stroke-width="0.3"/>
+      <circle cx="18" cy="18" r="2" fill="#a8833a"/>
+    </svg>
+    <h3>Koža</h3>
+    <p>Mesto na telesu je del kompozicije.</p>
+  </article>
+</div>
+
+<!-- ─── STUDIO ────────────────────────────────────────── -->
+<div class="orn-divider" aria-hidden="true">
+  <svg width="200" height="24" viewBox="0 0 200 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0"   y1="12" x2="82"  y2="12" stroke="#c9a85c" stroke-width="0.5"/>
+    <line x1="118" y1="12" x2="200" y2="12" stroke="#c9a85c" stroke-width="0.5"/>
+    <circle cx="100" cy="12" r="5"  stroke="#c9a85c" stroke-width="0.5" fill="none"/>
+    <circle cx="100" cy="12" r="1.5" fill="#c9a85c"/>
+    <circle cx="86"  cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
+    <circle cx="114" cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
+    <line x1="90"  y1="8"  x2="90"  y2="16" stroke="#c9a85c" stroke-width="0.3"/>
+    <line x1="110" y1="8"  x2="110" y2="16" stroke="#c9a85c" stroke-width="0.3"/>
+  </svg>
+</div>
 
 <section class="section" id="studio">
+  <div class="section-ghost" aria-hidden="true">I</div>
   <div class="section-inner">
-    <div class="eyebrow">Studio</div>
-    <h2>Mir. Tema. Natančnost.</h2>
-    <p class="text">
-      Studio je zasnovan kot zaseben prostor brez gneče in brez hitrih odločitev. Motiv se obravnava kot del telesa, ne kot dekoracija.
-    </p>
+    <div class="reveal">
+      <span class="eyebrow">Studio</span>
+      <h2>Mir. <em>Tema.</em> Natančnost.</h2>
+    </div>
+
+    <div class="studio-split">
+      <div class="studio-frame reveal">
+        <span>Fotografija studia</span>
+      </div>
+
+      <div class="studio-text reveal" style="transition-delay:.2s">
+        <p>Studio je zasnovan kot zaseben prostor brez gneče in brez hitrih odločitev. Vsak obisk je termin, ne vrsta.</p>
+        <p>Motiv se obravnava kot del telesa, ne kot dekoracija. Pred iglo pride pogovor. Pred pogovorom pride ideja.</p>
+        <p>Vstop v studio ni naključen. Je odločitev.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="section" id="storitve">
+<!-- ─── STORITVE ──────────────────────────────────────── -->
+<div class="orn-divider" aria-hidden="true">
+  <svg width="200" height="24" viewBox="0 0 200 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0"   y1="12" x2="82"  y2="12" stroke="#c9a85c" stroke-width="0.5"/>
+    <line x1="118" y1="12" x2="200" y2="12" stroke="#c9a85c" stroke-width="0.5"/>
+    <circle cx="100" cy="12" r="5"  stroke="#c9a85c" stroke-width="0.5" fill="none"/>
+    <circle cx="100" cy="12" r="1.5" fill="#c9a85c"/>
+    <circle cx="86"  cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
+    <circle cx="114" cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
+    <line x1="90"  y1="8"  x2="90"  y2="16" stroke="#c9a85c" stroke-width="0.3"/>
+    <line x1="110" y1="8"  x2="110" y2="16" stroke="#c9a85c" stroke-width="0.3"/>
+  </svg>
+</div>
+
+<section class="section c" id="storitve">
+  <div class="section-ghost" aria-hidden="true">II</div>
   <div class="section-inner">
-    <div class="eyebrow">Storitve</div>
-    <h2>Za motive, ki ne nastanejo mimogrede.</h2>
+    <div class="reveal">
+      <span class="eyebrow">Storitve</span>
+      <h2>Za motive, ki ne nastanejo <em>mimogrede.</em></h2>
+    </div>
 
     <div class="cards">
-      <article class="card">
+      <article class="card reveal">
+        <span class="card-num">I</span>
         <h3>Fine line</h3>
-        <p>Diskretne linije, manjši motivi in natančna izvedba z občutkom za prostor.</p>
+        <p>Diskretne linije, manjši motivi in natančna izvedba z občutkom za prostor na koži.</p>
       </article>
 
-      <article class="card">
+      <article class="card reveal" style="transition-delay:.12s">
+        <span class="card-num">II</span>
         <h3>Blackwork</h3>
-        <p>Temni ornamenti, simboli in večji kosi z močnim vizualnim učinkom.</p>
+        <p>Temni ornamenti, simboli in večji kosi z močnim vizualnim učinkom. Črna brez kompromisov.</p>
       </article>
 
-      <article class="card">
+      <article class="card reveal" style="transition-delay:.24s">
+        <span class="card-num">III</span>
         <h3>Cover up</h3>
-        <p>Prekrivanje stare tetovaže po realni oceni kože, obstoječih linij in barve.</p>
+        <p>Prekrivanje stare tetovaže po realni oceni kože, obstoječih linij in pigmenta.</p>
       </article>
     </div>
   </div>
 </section>
 
-<section class="section" id="galerija">
+<!-- ─── GALERIJA ──────────────────────────────────────── -->
+<div class="orn-divider" aria-hidden="true">
+  <svg width="200" height="24" viewBox="0 0 200 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0"   y1="12" x2="82"  y2="12" stroke="#c9a85c" stroke-width="0.5"/>
+    <line x1="118" y1="12" x2="200" y2="12" stroke="#c9a85c" stroke-width="0.5"/>
+    <circle cx="100" cy="12" r="5"  stroke="#c9a85c" stroke-width="0.5" fill="none"/>
+    <circle cx="100" cy="12" r="1.5" fill="#c9a85c"/>
+    <circle cx="86"  cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
+    <circle cx="114" cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
+    <line x1="90"  y1="8"  x2="90"  y2="16" stroke="#c9a85c" stroke-width="0.3"/>
+    <line x1="110" y1="8"  x2="110" y2="16" stroke="#c9a85c" stroke-width="0.3"/>
+  </svg>
+</div>
+
+<section class="section c" id="galerija">
+  <div class="section-ghost" aria-hidden="true">III</div>
   <div class="section-inner">
-    <div class="eyebrow">Galerija</div>
-    <h2>Dela iz studia.</h2>
-    <p class="text">Fotografije dokončanih tetovaž se dodajo kot izbrana zbirka, ne kot množičen katalog.</p>
+    <div class="reveal">
+      <span class="eyebrow">Galerija</span>
+      <h2>Dela iz <em>studia.</em></h2>
+      <p class="section-text">
+        Fotografije dokončanih tetovaž se dodajo kot izbrana zbirka, ne kot množičen katalog. Vsak motiv mora imeti dovolj prostora.
+      </p>
+    </div>
+
+    <div class="gallery-void reveal" style="transition-delay:.2s">
+      <span>Galerija se polni</span>
+    </div>
   </div>
 </section>
 
+<!-- ─── BLOG ──────────────────────────────────────────── -->
 <section class="section" id="blog">
   <div class="section-inner">
-    <div class="eyebrow">Zapisi</div>
-    <h2>O črnilu, koži in napačnih odločitvah.</h2>
+    <div class="reveal">
+      <span class="eyebrow">Zapisi</span>
+      <h2>O črnilu, koži<br>in napačnih <em>odločitvah.</em></h2>
+    </div>
+
+    <div class="cards" style="margin-top:60px">
+      <article class="card reveal">
+        <span class="card-num">I</span>
+        <h3>Nega</h3>
+        <p>Zakaj se dobra tetovaža lahko slabo zaceli in katere napake so najpogostejše.</p>
+      </article>
+
+      <article class="card reveal" style="transition-delay:.12s">
+        <span class="card-num">II</span>
+        <h3>Prvi motiv</h3>
+        <p>Kako izbrati motiv, ki bo imel smisel tudi čez nekaj let.</p>
+      </article>
+
+      <article class="card reveal" style="transition-delay:.24s">
+        <span class="card-num">III</span>
+        <h3>Prekrivanje</h3>
+        <p>Kdaj cover up ni najboljša rešitev in kdaj je najprej smiseln laser.</p>
+      </article>
+    </div>
   </div>
 </section>
 
-<section class="section" id="narocanje">
+<!-- ─── NAROČANJE ─────────────────────────────────────── -->
+<section class="section c" id="narocanje">
   <div class="section-inner">
-    <div class="eyebrow">Naročanje</div>
-    <h2>Najprej povej idejo. Potem jo razstavimo.</h2>
-    <p class="text">Opiši motiv, približno velikost v centimetrih, mesto na telesu in ali gre za novo tetovažo ali prekrivanje.</p>
+    <div class="reveal">
+      <span class="eyebrow">Naročanje</span>
+      <h2>Najprej povej <em>idejo.</em><br>Potem jo razstavimo.</h2>
+      <p class="section-text">
+        Opiši motiv, približno velikost v centimetrih, mesto na telesu in ali gre za novo tetovažo ali prekrivanje.
+      </p>
+    </div>
+
+    <form class="form reveal" style="transition-delay:.2s" onsubmit="return false">
+      <div class="field-row">
+        <label>Ime in priimek
+          <input type="text" required>
+        </label>
+        <label>E-pošta
+          <input type="email" required>
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label>Telefon
+          <input type="text">
+        </label>
+        <label>Storitev
+          <select>
+            <option>Prva tetovaža</option>
+            <option>Fine line</option>
+            <option>Blackwork</option>
+            <option>Cover up</option>
+            <option>Posvet</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Opis ideje
+        <textarea required></textarea>
+      </label>
+
+      <button class="form-submit" type="submit">Pošlji povpraševanje</button>
+    </form>
   </div>
 </section>
 
+<!-- ─── KONTAKT ───────────────────────────────────────── -->
 <section class="section" id="kontakt">
   <div class="section-inner">
-    <div class="eyebrow">Kontakt</div>
-    <h2>Vstop ni naključen.</h2>
-    <p class="text">Črnilo Sever tattoo studio. Gosposka ulica 18, 2000 Maribor. info@crnilosever.si. 02 555 18 44.</p>
+    <div class="reveal">
+      <span class="eyebrow">Kontakt</span>
+      <h2>Vstop ni <em>naključen.</em></h2>
+    </div>
+
+    <dl class="contact-grid reveal" style="transition-delay:.2s">
+      <div class="contact-cell">
+        <dt>Naslov</dt>
+        <dd>Gosposka ulica 18<br>2000 Maribor</dd>
+      </div>
+      <div class="contact-cell">
+        <dt>Elektronska pošta</dt>
+        <dd>info@crnilosever.si</dd>
+      </div>
+      <div class="contact-cell">
+        <dt>Telefon</dt>
+        <dd>02 555 18 44</dd>
+      </div>
+    </dl>
   </div>
 </section>
 
-</main>
-
+<!-- ─── FOOTER ────────────────────────────────────────── -->
 <footer>
-  Črnilo Sever. Zaseben tattoo salon za avtorske motive, črne linije in prekrivanja. Maribor.
+  <span class="footer-copy">Črnilo Sever &middot; Maribor &middot; Zaseben tattoo salon</span>
+  <div class="footer-sigil">Č</div>
 </footer>
+
+<script>
+/* ── Theatrical curtain ────────────────────────────── */
+const curtain = document.getElementById('curtain');
+if (curtain) {
+  // show contents
+  requestAnimationFrame(() => curtain.classList.add('loaded'));
+  // lift after delay
+  setTimeout(() => curtain.classList.add('open'), 1800);
+}
+
+/* ── Hero ghost parallax ───────────────────────────── */
+const ghost = document.querySelector('.hero-ghost');
+if (ghost) {
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    ghost.style.transform = `translateY(calc(-50% + ${y * 0.22}px))`;
+    ghost.style.opacity = Math.max(0, 0.018 - y * 0.00004);
+  }, { passive: true });
+}
+
+/* ── Custom cursor ─────────────────────────────────── */
+const cur = document.getElementById('js-cursor');
+const dot = document.getElementById('js-dot');
+let mx = 0, my = 0, cx = 0, cy = 0;
+
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+(function loop() {
+  cx += (mx - cx) * 0.13;
+  cy += (my - cy) * 0.13;
+  if (cur) cur.style.transform = `translate(${cx - 5}px,${cy - 5}px)`;
+  if (dot) dot.style.transform = `translate(${mx - 1}px,${my - 1}px)`;
+  requestAnimationFrame(loop);
+})();
+
+document.querySelectorAll('a, button, .card, .pillar').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    if (cur) { cur.style.width = '26px'; cur.style.height = '26px'; }
+  });
+  el.addEventListener('mouseleave', () => {
+    if (cur) { cur.style.width = '10px'; cur.style.height = '10px'; }
+  });
+});
+
+/* ── Scroll reveal ─────────────────────────────────── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* hero fires immediately */
+setTimeout(() => {
+  document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
+}, 60);
+</script>
 
 </body>
 </html>
