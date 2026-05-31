@@ -1,1279 +1,989 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Črnilo Ink — Tattoo Studio Maribor</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Črnilo Ink · Zasebni Tattoo Studio · Maribor</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Cinzel:wght@400;500;700&display=swap" rel="stylesheet" crossorigin>
 
 <style>
-/* ─── TOKENS ────────────────────────────────────────── */
 :root {
-  --bg:          #090909;
-  --deep:        #060606;
-  --surface:     #111111;
-  --surface2:    #0d0d0d;
-  --crimson:     #5c0e1a;
-  --crimson2:    #7a1524;
-  --gold:        #a8833a;
-  --gold-pale:   #c9a85c;
-  --text:        #eeece8;
-  --dim:         #a8a49e;
-  --line:        rgba(255,255,255,0.058);
-  --line-gold:   rgba(169,131,58,0.2);
-  --line-crim:   rgba(92,14,26,0.5);
-  --line-green:  rgba(120,160,100,0.1);
+  --noir:      #0a0908;
+  --noir-2:    #13110f;
+  --noir-3:    #1b1815;
+  --parchment: #f0e8d8;
+  --parch-2:   #e2d8c4;
+  --gold:      #c9a872;
+  --gold-2:    #e0c48a;
+  --oxblood:   #8a2a48;
+  --bone:      #e8deca;
+  --smoke:     rgba(240,232,216,0.78);
+
+  --display: 'UnifrakturCook', serif;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --mono:    'JetBrains Mono', monospace;
+  --caps:    'Cinzel', serif;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-
 body {
-  background: var(--bg);
-  background-image:
-    repeating-linear-gradient(
-      92deg,
-      rgba(255,255,255,0.000) 0px,
-      rgba(255,255,255,0.000) 2px,
-      rgba(255,255,255,0.008) 3px,
-      rgba(255,255,255,0.000) 4px
-    );
-  color: var(--text);
-  font-family: 'IM Fell English', Georgia, serif;
+  background: var(--noir);
+  color: var(--parchment);
+  font-family: var(--serif);
   font-weight: 400;
+  font-size: 19px;
   line-height: 1.6;
-  cursor: none;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  cursor: none;
 }
-
 a { color: inherit; text-decoration: none; }
 
-/* ─── CUSTOM CURSOR ─────────────────────────────────── */
+/* ── Grain + Vignette ─────────────────────────────── */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999;
+  opacity: 0.062; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9998;
+  background: radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,0.65) 100%);
+}
+
+/* ── Custom cursor ───────────────────────────────── */
 .cursor {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 10px; height: 10px;
-  border: 1px solid var(--gold-pale);
+  border: 1px solid var(--gold);
   border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
+  pointer-events: none; z-index: 10000;
   mix-blend-mode: exclusion;
   transition: width .3s cubic-bezier(.16,1,.3,1), height .3s cubic-bezier(.16,1,.3,1);
 }
 .cursor-dot {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 2px; height: 2px;
-  background: var(--gold-pale);
+  background: var(--gold);
   border-radius: 50%;
-  pointer-events: none;
-  z-index: 10001;
+  pointer-events: none; z-index: 10001;
 }
 
-/* ─── BRUSHED MATTE TEXTURE ──────────────────────────── */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      180deg,
-      rgba(255,255,255,0.000) 0px,
-      rgba(255,255,255,0.000) 1px,
-      rgba(255,255,255,0.009) 2px,
-      rgba(255,255,255,0.000) 3px
-    ),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.088;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* ─── VIGNETTE ──────────────────────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.88) 100%);
-  pointer-events: none;
-  z-index: 9998;
-}
-
-/* ─── SCROLLBAR ─────────────────────────────────────── */
+/* ── Scrollbar ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 2px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--crimson); }
+::-webkit-scrollbar-track { background: var(--noir); }
+::-webkit-scrollbar-thumb { background: var(--oxblood); }
 
-/* ─── ANIMATIONS ────────────────────────────────────── */
+/* ── Animations ──────────────────────────────────── */
+@keyframes emberPulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.85); }
+  50%       { opacity: 1;   transform: scale(1.1); }
+}
+@keyframes drip {
+  0%, 100% { transform: scaleY(0.4); transform-origin: top; opacity: 0.5; }
+  50%       { transform: scaleY(1); opacity: 1; }
+}
 @keyframes flicker {
   0%, 100% { opacity: 1; }
-  28%       { opacity: 0.86; }
-  54%       { opacity: 0.93; }
-  72%       { opacity: 0.82; }
-  88%       { opacity: 0.94; }
+  28%       { opacity: 0.84; }
+  54%       { opacity: 0.92; }
+  72%       { opacity: 0.8; }
 }
 
-@keyframes breathe {
-  0%, 100% { transform: scale(1);   opacity: 0.5; }
-  50%       { transform: scale(1.03); opacity: 0.65; }
-}
-
+/* ── Reveal ──────────────────────────────────────── */
 .reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 1.2s cubic-bezier(.16,1,.3,1), transform 1.2s cubic-bezier(.16,1,.3,1);
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 1.6s cubic-bezier(.22,.61,.36,1), transform 1.6s cubic-bezier(.22,.61,.36,1);
+  transition-delay: var(--rd, 0ms);
 }
-.reveal.visible { opacity: 1; transform: none; }
+.reveal.is-in { opacity: 1; transform: none; }
+.reveal-blur {
+  opacity: 0; filter: blur(18px); transform: scale(1.02);
+  transition: opacity 2.2s ease, filter 2.2s ease, transform 2.6s ease;
+  transition-delay: var(--rd, 0ms);
+}
+.reveal-blur.is-in { opacity: 1; filter: blur(0); transform: none; }
 
-/* ─── EYEBROW ───────────────────────────────────────── */
-.eyebrow {
-  display: block;
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
+/* ── Typography ──────────────────────────────────── */
+.display { font-family: var(--display); font-weight: 700; letter-spacing: 0.005em; line-height: 0.95; }
+.caps    { font-family: var(--caps); text-transform: uppercase; letter-spacing: 0.32em; font-weight: 500; }
+.mono    { font-family: var(--mono); }
+.italic  { font-style: italic; }
+
+hr.rule {
+  border: none; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+  opacity: 0.45;
+}
+.ornament {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  color: var(--gold); opacity: 0.65;
+}
+.ornament .line { flex: 1; max-width: 220px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold) 100%); }
+.ornament .line.r { transform: scaleX(-1); }
+.ornament svg { width: 28px; height: 28px; }
+
+/* ── Curtain ─────────────────────────────────────── */
+.curtain {
+  position: fixed; inset: 0;
+  background: #080706;
+  z-index: 8000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+  transition: opacity 1.8s cubic-bezier(.7,0,.3,1) 1.4s,
+              visibility 0s linear 3.2s;
+}
+.curtain.open { opacity: 0; visibility: hidden; }
+.curtain-rule { width: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.4; transition: width 1s cubic-bezier(.16,1,.3,1) 0.5s; }
+.curtain.loaded .curtain-rule { width: 200px; }
+.curtain-sigil {
+  font-family: var(--display); font-size: 72px;
   color: var(--gold);
-  margin-bottom: 28px;
+  opacity: 0; transform: scale(0.88);
+  transition: opacity 0.9s ease 0.2s, transform 0.9s cubic-bezier(.16,1,.3,1) 0.2s;
+  animation: flicker 5s ease-in-out infinite 1.5s;
+  text-shadow: 0 0 30px rgba(201,168,114,0.4);
+}
+.curtain.loaded .curtain-sigil { opacity: 1; transform: scale(1); }
+.curtain-name {
+  font-family: var(--caps); font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase;
+  color: var(--smoke); opacity: 0; transform: translateY(10px);
+  transition: opacity 0.9s ease 0.45s, transform 0.9s cubic-bezier(.16,1,.3,1) 0.45s;
+}
+.curtain.loaded .curtain-name { opacity: 1; transform: none; }
+
+/* ── Nav ─────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 22px 44px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 100;
+  background: rgba(10,9,8,0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(201,168,114,0.1);
+}
+.nav .mark {
+  font-family: var(--display); font-size: 22px;
+  color: var(--parchment);
+  animation: flicker 8s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(201,168,114,0.2);
+}
+.nav .links {
+  display: flex; gap: 36px;
+  font-family: var(--caps); font-size: 9px;
+  letter-spacing: 0.44em; text-transform: uppercase;
+}
+.nav a { color: var(--parchment); opacity: 0.8; transition: opacity .3s, letter-spacing .4s; }
+.nav a:hover { opacity: 1; letter-spacing: 0.54em; color: var(--gold-2); }
+.nav .nav-cta {
+  border: 1px solid rgba(138,42,72,0.7);
+  padding: 10px 22px; opacity: 1;
+  transition: background .35s, border-color .35s;
+}
+.nav .nav-cta:hover { background: var(--oxblood); border-color: var(--oxblood); letter-spacing: 0.44em; }
+
+/* ── Hero ────────────────────────────────────────── */
+.hero {
+  position: relative; min-height: 100svh;
+  padding: 130px 44px 80px;
+  display: grid; grid-template-columns: 1fr;
+  align-content: space-between;
+  overflow: hidden;
+  scroll-margin-top: 0;
+}
+.hero-smoke { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.hero-smoke .veil {
+  position: absolute; inset: -10%;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 35%, rgba(201,168,114,0.14), transparent 60%),
+    radial-gradient(ellipse 45% 65% at 72% 60%, rgba(138,42,72,0.24), transparent 70%),
+    radial-gradient(ellipse 35% 50% at 22% 30%, rgba(138,42,72,0.12), transparent 70%);
+  filter: blur(20px);
+}
+.hero-smoke svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.3; }
+
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase;
+}
+.hero-center {
+  position: relative; z-index: 2; text-align: center; padding: 60px 0;
+}
+.hero-center .estd {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.5em;
+  color: var(--gold); margin-bottom: 32px;
+  display: inline-flex; align-items: center; gap: 14px;
+}
+.hero-center .estd::before,
+.hero-center .estd::after {
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--oxblood);
+  box-shadow: 0 0 12px var(--oxblood), 0 0 24px rgba(138,42,72,0.6);
+  animation: emberPulse 3.4s ease-in-out infinite;
+}
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(80px, 16vw, 220px);
+  line-height: 0.88; letter-spacing: -0.01em;
+  color: var(--parchment);
+  text-shadow: 0 0 60px rgba(201,168,114,0.08);
+}
+.hero-title .amp {
+  color: var(--gold); font-style: italic;
+  font-family: var(--serif); font-weight: 400;
+  font-size: 0.5em; vertical-align: 0.22em; margin: 0 0.12em;
+}
+.hero-sub {
+  margin-top: 28px;
+  font-family: var(--serif); font-style: italic;
+  font-size: clamp(18px, 1.6vw, 24px);
+  color: var(--bone); letter-spacing: 0.02em;
+}
+.hero-bottom {
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  align-items: end; gap: 24px;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase;
+}
+.hero-bottom .center { text-align: center; color: var(--gold); }
+.hero-bottom .right  { text-align: right; }
+.hero-bottom .scroll { display: inline-flex; flex-direction: column; align-items: center; gap: 10px; }
+.hero-bottom .scroll .bar {
+  width: 1px; height: 50px;
+  background: linear-gradient(180deg, var(--gold), transparent);
+  animation: drip 3s ease-in-out infinite;
 }
 
-/* ─── HEADER ────────────────────────────────────────── */
-.header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 500;
-  padding: 26px 54px;
-  display: flex;
+/* ── Section base ────────────────────────────────── */
+section.chamber {
+  position: relative; padding: 160px 44px;
+  border-top: 1px solid rgba(201,168,114,0.14);
+  scroll-margin-top: 80px;
+}
+.section-marker {
+  position: absolute; top: 28px; left: 44px;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase;
+}
+.section-marker .num { color: var(--smoke); margin-right: 14px; }
+
+/* ── Credo (Manifesto) ───────────────────────────── */
+.manifesto { max-width: 1100px; margin: 0 auto; text-align: center; }
+.manifesto .eyebrow {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.4em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 40px;
+}
+.manifesto h2 {
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(40px, 5.4vw, 84px);
+  line-height: 1.05; letter-spacing: 0.005em;
+  color: var(--parchment); margin-bottom: 36px;
+}
+.manifesto h2 em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  color: var(--gold-2); font-size: 0.82em;
+}
+.manifesto .lead {
+  max-width: 720px; margin: 0 auto;
+  font-size: 24px; line-height: 1.6;
+  color: var(--bone); font-style: italic;
+}
+
+.creeds {
+  margin: 100px auto 0;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: rgba(201,168,114,0.14);
+  max-width: 1200px; border: 1px solid rgba(201,168,114,0.14);
+}
+.creed {
+  background: var(--noir); padding: 48px 36px;
+  transition: background .4s;
+}
+.creed:hover { background: var(--noir-2); }
+.creed .roman {
+  font-family: var(--serif); font-style: italic;
+  font-size: 14px; color: var(--oxblood); margin-bottom: 24px;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 14px rgba(138,42,72,0.5);
+}
+.creed h3 { font-family: var(--display); font-size: 32px; line-height: 1.05; margin-bottom: 16px; }
+.creed p  { font-size: 17px; line-height: 1.7; color: var(--smoke); }
+
+/* ── Studio section ──────────────────────────────── */
+.studio-grid {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.studio-frame {
+  position: relative; aspect-ratio: 4 / 5; overflow: hidden;
+  border: 1px solid rgba(201,168,114,0.25);
+}
+.studio-frame .slot {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(135deg, rgba(20,17,15,0.5), rgba(10,9,8,0.95)),
+    repeating-linear-gradient(45deg, var(--noir-2) 0 8px, var(--noir-3) 8px 16px);
+  display: flex; align-items: center; justify-content: center;
+}
+.studio-frame .slot::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 40% at 50% 30%, rgba(240,232,216,0.07), transparent);
+}
+.studio-frame .slot span {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase;
+  position: relative; z-index: 1;
+}
+.studio-info h2 {
+  font-family: var(--display); font-size: clamp(42px, 6vw, 88px); line-height: 0.9; margin-bottom: 28px;
+}
+.studio-info h2 em {
+  font-family: var(--serif); font-style: italic; color: var(--gold-2); font-weight: 400;
+  font-size: 0.7em; display: block; margin-top: 10px;
+}
+.studio-info p { font-size: 19px; line-height: 1.78; color: var(--bone); margin-bottom: 22px; }
+.studio-info p:last-child { margin-bottom: 0; }
+
+/* ── Ritual / process steps ──────────────────────── */
+.ritual { max-width: 1300px; margin: 0 auto; }
+.ritual-head {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; margin-bottom: 100px;
+}
+.ritual-head h2 { font-family: var(--display); font-size: clamp(48px, 7vw, 110px); line-height: 0.95; }
+.ritual-head h2 em {
+  font-family: var(--serif); font-style: italic;
+  color: var(--gold-2); font-weight: 400;
+  font-size: 0.7em; display: block; margin-top: 12px;
+}
+.ritual-head .lead { font-style: italic; font-size: 22px; color: var(--bone); align-self: end; }
+
+.steps { border-top: 1px solid rgba(201,168,114,0.22); }
+.step {
+  display: grid; grid-template-columns: 100px 1fr 2fr 1fr;
+  gap: 40px; padding: 48px 0;
+  border-bottom: 1px solid rgba(201,168,114,0.14);
+  align-items: baseline; transition: background .6s;
+}
+.step:hover { background: rgba(201,168,114,0.03); }
+.step .roman {
+  font-family: var(--serif); font-style: italic; font-size: 32px;
+  color: var(--oxblood); text-shadow: 0 0 14px rgba(138,42,72,0.45);
+}
+.step .name { font-family: var(--display); font-size: 36px; color: var(--parchment); line-height: 1; }
+.step .desc { font-size: 19px; line-height: 1.7; color: var(--bone); }
+.step .when {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+  color: var(--gold); text-transform: uppercase; text-align: right;
+}
+
+/* ── Gallery ─────────────────────────────────────── */
+.gallery-head { text-align: center; margin-bottom: 80px; }
+.gallery-head h2 { font-family: var(--display); font-size: clamp(48px, 7vw, 110px); line-height: 1; margin-bottom: 20px; }
+.gallery-head p  { font-style: italic; color: var(--bone); font-size: 20px; }
+
+.gallery {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 100px; gap: 20px;
+  max-width: 1400px; margin: 0 auto;
+}
+.plate {
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(201,168,114,0.18);
+  background:
+    linear-gradient(135deg, rgba(20,17,15,0.5), rgba(10,9,8,0.95)),
+    repeating-linear-gradient(45deg, var(--noir-2) 0 6px, var(--noir-3) 6px 12px);
+  transition: border-color .4s;
+}
+.plate:hover { border-color: rgba(201,168,114,0.5); }
+.plate::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(240,232,216,0.05), transparent 70%);
+}
+.plate .tag {
+  position: absolute; top: 12px; left: 12px;
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase;
+}
+.plate .placeholder {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.3em; color: rgba(240,232,216,0.5); text-transform: uppercase;
+}
+.plate.p1 { grid-column: span 5; grid-row: span 6; }
+.plate.p2 { grid-column: span 4; grid-row: span 5; margin-top: 50px; }
+.plate.p3 { grid-column: span 3; grid-row: span 6; }
+
+/* ── Blog ────────────────────────────────────────── */
+.blog-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: rgba(201,168,114,0.14);
+  border: 1px solid rgba(201,168,114,0.14);
+  max-width: 1300px; margin: 60px auto 0;
+}
+.blog-card {
+  background: var(--noir); padding: 48px 36px;
+  transition: background .4s;
+}
+.blog-card:hover { background: var(--noir-2); }
+.blog-card .roman {
+  font-family: var(--serif); font-style: italic;
+  font-size: 14px; color: var(--oxblood); margin-bottom: 24px;
+  letter-spacing: 0.2em; text-shadow: 0 0 14px rgba(138,42,72,0.5);
+}
+.blog-card h3 { font-family: var(--display); font-size: 32px; margin-bottom: 16px; }
+.blog-card p  { font-size: 17px; line-height: 1.7; color: var(--smoke); }
+
+/* ── Booking ─────────────────────────────────────── */
+.booking {
+  position: relative;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(138,42,72,0.16), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(138,42,72,0.08), transparent 70%),
+    var(--noir);
+  padding: 180px 44px 160px;
+  border-top: 1px solid rgba(138,42,72,0.25);
+  scroll-margin-top: 80px;
+}
+.booking-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+.booking .eyebrow {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.45em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 36px;
+}
+.booking h2 {
+  font-family: var(--display); font-size: clamp(56px, 8vw, 130px);
+  line-height: 0.92; margin-bottom: 28px;
+}
+.booking h2 em {
+  display: block; font-family: var(--serif); font-style: italic;
+  font-weight: 400; color: var(--gold-2); font-size: 0.55em; margin-top: 10px;
+}
+.booking .lead { font-style: italic; font-size: 22px; color: var(--bone); margin-bottom: 70px; }
+
+form.rite { text-align: left; border-top: 1px solid rgba(201,168,114,0.22); }
+.field {
+  display: grid; grid-template-columns: 120px 1fr;
+  gap: 30px; padding: 28px 0;
+  border-bottom: 1px solid rgba(201,168,114,0.14);
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-  background: rgba(6,6,6,0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
 }
-
-.logo-block {
-  display: flex;
-  align-items: center;
-  gap: 18px;
+.field label {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase;
 }
+.field input,
+.field select,
+.field textarea {
+  background: transparent; border: none;
+  color: var(--parchment); font-family: var(--serif);
+  font-size: 22px; width: 100%; outline: none;
+}
+.field input::placeholder,
+.field textarea::placeholder { color: rgba(240,232,216,0.45); font-style: italic; }
+.field textarea { resize: vertical; min-height: 80px; padding: 8px 0; line-height: 1.5; }
+.field select {
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='%23a08862'><path d='M0 0l6 8 6-8z'/></svg>");
+  background-repeat: no-repeat; background-position: right center; background-size: 10px; padding-right: 24px;
+}
+.field select option { background: var(--noir-3); color: var(--parchment); }
 
-.logo-sigil {
-  width: 36px; height: 36px;
-  border: 1px solid var(--gold);
-  display: grid;
-  place-items: center;
-  color: var(--gold);
-  font-style: italic;
-  font-size: 18px;
+.submit-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 50px; gap: 30px;
+}
+.submit-row .note {
+  font-family: var(--serif); font-style: italic;
+  font-size: 14px; color: var(--smoke); max-width: 320px;
+}
+button.seal {
+  background: transparent;
+  border: 1px solid var(--oxblood);
+  color: var(--parchment);
+  padding: 22px 48px;
+  font-family: var(--caps); font-size: 12px;
+  letter-spacing: 0.4em; text-transform: uppercase;
+  cursor: none; transition: all .5s; font-weight: 500;
+  box-shadow: 0 0 0 0 rgba(138,42,72,0.5), inset 0 0 30px rgba(138,42,72,0.08);
+}
+button.seal:hover {
+  background: var(--oxblood); color: var(--parchment);
+  letter-spacing: 0.5em;
+  box-shadow: 0 0 30px rgba(138,42,72,0.5), inset 0 0 30px rgba(255,255,255,0.05);
+}
+button.seal::before {
+  content: "✦"; margin-right: 14px;
+  color: var(--oxblood); transition: color .5s;
+  text-shadow: 0 0 10px rgba(138,42,72,0.7);
+}
+button.seal:hover::before { color: var(--parchment); }
+
+/* ── Kontakt ─────────────────────────────────────── */
+.contact-grid {
+  max-width: 1300px; margin: 60px auto 0;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: rgba(201,168,114,0.14);
+  border: 1px solid rgba(201,168,114,0.14);
+}
+.contact-cell { background: var(--noir); padding: 48px 36px; }
+.contact-cell dt {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.35em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 16px;
+}
+.contact-cell dd { font-family: var(--serif); font-size: 20px; color: var(--bone); line-height: 1.65; }
+
+/* ── Footer ──────────────────────────────────────── */
+footer {
+  padding: 100px 44px 50px;
+  border-top: 1px solid rgba(201,168,114,0.16);
+  background: var(--noir-2);
+}
+.foot-grid {
+  max-width: 1400px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 60px; margin-bottom: 80px;
+}
+.foot-grid h4 {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.3em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 22px; font-weight: 400;
+}
+.foot-grid .mast { font-family: var(--display); font-size: 56px; line-height: 0.9; margin-bottom: 18px; animation: flicker 9s ease-in-out infinite; }
+.foot-grid .motto { font-family: var(--serif); font-style: italic; color: var(--bone); max-width: 300px; }
+.foot-grid ul { list-style: none; }
+.foot-grid li { font-family: var(--serif); font-size: 18px; color: var(--bone); padding: 6px 0; }
+.foot-grid a { color: inherit; transition: color .3s; }
+.foot-grid a:hover { color: var(--gold-2); }
+.foot-bottom {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 30px; border-top: 1px solid rgba(201,168,114,0.12);
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke);
+}
+.foot-seal {
+  width: 44px; height: 44px;
+  border: 1px solid var(--oxblood); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--oxblood); font-family: var(--display); font-size: 20px;
+  box-shadow: 0 0 18px rgba(138,42,72,0.4), inset 0 0 14px rgba(138,42,72,0.16);
+  text-shadow: 0 0 8px rgba(138,42,72,0.6);
   animation: flicker 7s ease-in-out infinite;
 }
 
-.logo-name {
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-nav {
-  display: flex;
-  gap: 38px;
-  align-items: center;
-}
-
-nav a {
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.48em;
-  text-transform: uppercase;
-  color: var(--text);
-  transition: color .35s, letter-spacing .4s cubic-bezier(.16,1,.3,1);
-}
-
-nav a:hover {
-  color: var(--gold-pale);
-  letter-spacing: 0.58em;
-}
-
-nav .nav-cta {
-  color: var(--gold);
-  border: 1px solid var(--line-gold);
-  padding: 10px 24px;
-  transition: background .35s, color .35s;
-}
-
-nav .nav-cta:hover {
-  background: var(--gold);
-  color: #07040a;
-}
-
-/* ─── HERO ──────────────────────────────────────────── */
-.hero {
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 90px 60px 84px;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-ambient {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 55% 50% at 72% 38%, rgba(92,14,26,0.16) 0%, transparent 70%),
-    radial-gradient(ellipse 35% 55% at 18% 72%, rgba(169,131,58,0.06) 0%, transparent 65%),
-    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(0,0,0,0.55) 0%, transparent 60%);
-  animation: breathe 12s ease-in-out infinite;
-}
-
-.hero-ghost {
-  position: absolute;
-  top: 50%;
-  right: 50px;
-  transform: translateY(-50%);
-  font-family: 'IM Fell English', serif;
-  font-weight: 400;
-  font-style: italic;
-  font-size: clamp(180px, 25vw, 360px);
-  color: rgba(255,255,255,0.018);
-  line-height: 1;
-  letter-spacing: -0.06em;
-  user-select: none;
-  pointer-events: none;
-}
-
-.hero-label {
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 36px;
-}
-
-.hero-title {
-  font-family: 'IM Fell English', serif;
-  font-weight: 400;
-  font-size: clamp(72px, 11vw, 162px);
-  line-height: 0.87;
-  letter-spacing: -0.032em;
-  color: var(--text);
-  max-width: 1160px;
-  position: relative;
-}
-
-.hero-title em {
-  font-style: italic;
-  color: var(--gold-pale);
-  display: block;
-  animation: flicker 9s ease-in-out infinite;
-}
-
-.hero-foot {
-  margin-top: 58px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 40px;
-}
-
-.hero-lead {
-  max-width: 420px;
-  color: var(--dim);
-  font-size: 17px;
-  font-weight: 400;
-  line-height: 1.78;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-/* ─── BUTTONS ───────────────────────────────────────── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 52px;
-  padding: 0 34px;
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  border: 1px solid var(--line-gold);
-  color: var(--text);
-  transition: background .35s, border-color .35s, color .35s;
-  cursor: none;
-}
-
-.btn:hover {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: #07040a;
-}
-
-.btn-ghost {
-  border-color: rgba(92,14,26,0.85);
-  color: var(--text);
-}
-
-.btn-ghost:hover {
-  background: var(--crimson2);
-  border-color: var(--crimson2);
-  color: var(--text);
-}
-
-/* ─── PILLARS ───────────────────────────────────────── */
-.pillars {
-  display: grid;
-  grid-template-columns: 1fr 1px 1fr 1px 1fr;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.pillar-sep {
-  background: var(--line);
-}
-
-.pillar {
-  padding: 76px 48px;
-  text-align: center;
-}
-
-.pillar-num {
-  display: block;
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  color: var(--crimson2);
-  margin-bottom: 34px;
-}
-
-.pillar-icon {
-  display: block;
-  margin: 0 auto 28px;
-  opacity: 0.72;
-}
-
-.pillar h3 {
-  font-family: 'IM Fell English', serif;
-  font-weight: 400;
-  font-size: 26px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-.pillar p {
-  margin-top: 14px;
-  color: var(--dim);
-  font-size: 16px;
-  max-width: 210px;
-  margin-inline: auto;
-  line-height: 1.75;
-}
-
-/* ─── SECTION BASE ──────────────────────────────────── */
-.section {
-  padding: 108px 60px;
-  border-top: none;
-  position: relative;
-  overflow: hidden;
-  scroll-margin-top: 90px;
-}
-
-.section-inner {
-  max-width: 1120px;
-  margin: 0 auto;
-}
-
-.section.c { text-align: center; }
-
-.section h2 {
-  font-family: 'IM Fell English', serif;
-  font-weight: 400;
-  font-size: clamp(46px, 6.5vw, 90px);
-  line-height: 0.92;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--text);
-  max-width: 860px;
-  margin-inline: auto;
-}
-
-.section h2 em {
-  font-style: italic;
-  color: var(--gold-pale);
-  animation: flicker 11s ease-in-out infinite;
-}
-
-.section-text {
-  max-width: 580px;
-  margin: 28px auto 0;
-  color: var(--dim);
-  font-size: 18px;
-  line-height: 1.82;
-}
-
-/* ─── STUDIO SPLIT ──────────────────────────────────── */
-.studio-split {
-  margin-top: 72px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.studio-text p {
-  color: var(--dim);
-  font-size: 18px;
-  line-height: 1.9;
-  margin-bottom: 22px;
-}
-
-.studio-text p:last-child { margin-bottom: 0; }
-
-.studio-frame {
-  border: 1px solid var(--line-gold);
-  padding: 2px;
-  aspect-ratio: 4 / 5;
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  box-shadow: inset 0 0 60px rgba(0,0,0,0.4);
-}
-
-.studio-frame::before {
-  content: '';
-  position: absolute;
-  inset: 14px;
-  border: 1px solid var(--line);
-  pointer-events: none;
-}
-
-.studio-frame span {
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 8px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-/* ─── CARDS ─────────────────────────────────────────── */
-.cards {
-  margin-top: 60px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-
-.card {
-  background: var(--surface);
-  padding: 50px 42px;
-  position: relative;
-  transition: background .4s;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.25);
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 1px; height: 0;
-  background: linear-gradient(to bottom, var(--crimson2), transparent);
-  transition: height .6s cubic-bezier(.16,1,.3,1);
-}
-
-.card:hover { background: var(--surface2); }
-.card:hover::before { height: 100%; }
-
-.card-num {
-  display: block;
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.20em;
-  color: var(--crimson2);
-  margin-bottom: 26px;
-}
-
-.card h3 {
-  font-family: 'IM Fell English', serif;
-  font-weight: 400;
-  font-size: 36px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text);
-}
-
-.card p {
-  margin-top: 18px;
-  color: var(--dim);
-  line-height: 1.78;
-  font-size: 17px;
-}
-
-/* ─── GALLERY ───────────────────────────────────────── */
-.gallery-void {
-  margin-top: 60px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  padding: 130px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.gallery-void::before,
-.gallery-void::after {
-  content: '';
-  position: absolute;
-  inset: 16px;
-  border: 1px solid var(--line);
-  pointer-events: none;
-}
-
-.gallery-void span {
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 8px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-/* ─── FORM ──────────────────────────────────────────── */
-.form {
-  max-width: 800px;
-  margin: 60px auto 0;
-  display: grid;
-  gap: 18px;
-}
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-label {
-  display: grid;
-  gap: 10px;
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 16px 18px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  color: var(--text);
-  font-family: 'IM Fell English', serif;
-  font-size: 17px;
-  font-weight: 400;
-  transition: border-color .3s;
-  appearance: none;
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--gold);
-}
-
-textarea { min-height: 160px; resize: vertical; }
-
-select option { background: var(--surface); }
-
-.form-submit {
-  width: 100%;
-  height: 56px;
-  background: transparent;
-  border: 1px solid var(--line-gold);
-  color: var(--text);
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  cursor: none;
-  transition: background .35s, color .35s, border-color .35s;
-}
-
-.form-submit:hover {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: #07040a;
-}
-
-/* ─── CONTACT ───────────────────────────────────────── */
-.contact-grid {
-  margin-top: 54px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-
-.contact-cell {
-  background: var(--surface);
-  padding: 42px 38px;
-}
-
-.contact-cell dt {
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 16px;
-}
-
-.contact-cell dd {
-  font-size: 18px;
-  color: var(--text);
-  font-weight: 400;
-  line-height: 1.65;
-}
-
-/* ─── FOOTER ────────────────────────────────────────── */
-footer {
-  padding: 36px 60px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-copy {
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-.footer-sigil {
-  width: 28px; height: 28px;
-  border: 1px solid rgba(169,131,58,0.25);
-  display: grid;
-  place-items: center;
-  font-style: italic;
-  font-size: 14px;
-  color: var(--gold);
-  opacity: 0.55;
-  animation: flicker 10s ease-in-out infinite;
-}
-
-/* ─── THEATRICAL CURTAIN ────────────────────────────── */
-.curtain {
-  position: fixed;
-  inset: 0;
-  background: #060606;
-  z-index: 8000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 22px;
-  transition: opacity 1.8s cubic-bezier(.7,0,.3,1) 1.2s,
-              visibility 0s linear 3s;
-}
-
-.curtain.open {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.curtain-sigil {
-  width: 80px; height: 80px;
-  border: 1px solid var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-style: italic;
-  font-size: 48px;
-  color: var(--gold);
-  opacity: 0;
-  transform: scale(0.88);
-  transition: opacity 0.9s ease 0.15s, transform 0.9s cubic-bezier(.16,1,.3,1) 0.15s;
-  animation: flicker 4s ease-in-out infinite 1s;
-  position: relative;
-}
-
-.curtain-sigil::before {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(169,131,58,0.22);
-}
-
-.curtain-name {
-  font-family: 'Cinzel', serif;
-  font-size: 9px;
-  letter-spacing: 0.5em;
-  text-transform: uppercase;
-  color: var(--dim);
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.9s ease 0.4s, transform 0.9s cubic-bezier(.16,1,.3,1) 0.4s;
-}
-
-.curtain-rule {
-  width: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-pale), transparent);
-  opacity: 0.35;
-  transition: width 0.9s cubic-bezier(.16,1,.3,1) 0.6s;
-}
-
-.curtain.loaded .curtain-sigil { opacity: 1; transform: scale(1); }
-.curtain.loaded .curtain-name  { opacity: 1; transform: translateY(0); }
-.curtain.loaded .curtain-rule  { width: 180px; }
-
-/* ─── MARQUEE BAND ──────────────────────────────────── */
-.marquee {
-  overflow: hidden;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: var(--deep);
-  padding: 16px 0;
-}
-
-.marquee-inner {
-  display: flex;
-  gap: 0;
-  white-space: nowrap;
-  animation: marquee-scroll 38s linear infinite;
-  width: max-content;
-}
-
-.marquee-inner span {
-  font-family: 'Cinzel', serif;
-  font-size: 8px;
-  letter-spacing: 0.38em;
-  text-transform: uppercase;
-  padding: 0 32px;
-}
-
-.marquee-inner .m-word { color: var(--text); }
-.marquee-inner .m-dot  { color: var(--gold); }
-
-@keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-/* ─── ORNAMENTAL DIVIDER ────────────────────────────── */
-.orn-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 60px;
-  height: 60px;
-  background: var(--bg);
-}
-
-.orn-divider svg { opacity: 0.55; }
-
-/* ─── SECTION GHOST NUMBER ──────────────────────────── */
-.section { position: relative; overflow: hidden; }
-
-.section-ghost {
-  position: absolute;
-  top: 50%;
-  right: -20px;
-  transform: translateY(-50%);
-  font-family: 'IM Fell English', serif;
-  font-style: italic;
-  font-size: clamp(180px, 22vw, 320px);
-  color: rgba(255,255,255,0.018);
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-  letter-spacing: -0.05em;
-}
-
-/* ─── CARD TITLE HOVER ──────────────────────────────── */
-.card h3 {
-  transition: letter-spacing .6s cubic-bezier(.16,1,.3,1),
-              color .4s;
-}
-
-.card:hover h3 {
-  letter-spacing: 0.1em;
-  color: var(--gold-pale);
-}
-
-/* ─── MOBILE ────────────────────────────────────────── */
-@media (max-width: 880px) {
+/* ── Mobile ──────────────────────────────────────── */
+@media (max-width: 900px) {
   body { cursor: auto; }
   .cursor, .cursor-dot { display: none; }
-
-  .header {
-    padding: 16px 20px;
-  }
-
-  .logo-name {
-    font-size: 10px;
-    letter-spacing: 0.28em;
-  }
-
-  .nav-cta {
-    font-size: 10px;
-    padding: 9px 16px;
-    letter-spacing: 0.18em;
-  }
-
-  .nav-links { display: none; }
-
-  .hero {
-    padding: 90px 22px 60px;
-  }
-
-  .hero-ghost { display: none; }
-
-  .hero-foot {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 30px;
-  }
-
-  .hero-actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
-    justify-content: center;
-    font-size: 11px;
-    height: 56px;
-    letter-spacing: 0.18em;
-  }
-
-  .pillars {
-    grid-template-columns: 1fr;
-  }
-
-  .pillar-sep { height: 1px; width: 100%; }
-  .pillar { padding: 58px 28px; }
-
-  .section { padding: 74px 22px; }
-
-  .studio-split { grid-template-columns: 1fr; gap: 44px; }
-
-  .cards { grid-template-columns: 1fr; }
-  .field-row { grid-template-columns: 1fr; }
-
-  .contact-grid { grid-template-columns: 1fr; }
-
-  footer { padding: 30px 22px; flex-direction: column; gap: 18px; text-align: center; }
+  .nav { padding: 16px 20px; }
+  .nav .links { display: none; }
+  .nav .mark { font-size: 18px; }
+  .hero { padding: 100px 22px 60px; }
+  section.chamber { padding: 90px 22px; }
+  .section-marker { left: 22px; }
+  .creeds, .blog-grid, .contact-grid { grid-template-columns: 1fr; }
+  .studio-grid { grid-template-columns: 1fr; gap: 40px; }
+  .ritual-head { grid-template-columns: 1fr; gap: 30px; }
+  .step { grid-template-columns: 60px 1fr; gap: 16px; }
+  .step .desc, .step .when { grid-column: 2; text-align: left; }
+  .gallery { grid-auto-rows: 60px; }
+  .plate.p1 { grid-column: span 12; grid-row: span 4; }
+  .plate.p2 { grid-column: span 6;  grid-row: span 3; }
+  .plate.p3 { grid-column: span 6;  grid-row: span 3; }
+  .booking { padding: 90px 22px; }
+  .field { grid-template-columns: 1fr; gap: 6px; padding: 20px 0; }
+  .submit-row { flex-direction: column; align-items: stretch; }
+  button.seal { text-align: center; }
+  .foot-grid { grid-template-columns: 1fr; gap: 40px; }
+  .foot-bottom { flex-direction: column; gap: 18px; text-align: center; }
+  .hero-bottom { grid-template-columns: 1fr; text-align: center; }
+  .hero-bottom .right { text-align: center; }
 }
 </style>
 </head>
-
 <body>
 
-<!-- ─── CURTAIN ───────────────────────────────────────── -->
+<!-- ── Curtain ──────────────────────────────────── -->
 <div class="curtain" id="curtain">
   <div class="curtain-rule"></div>
   <div class="curtain-sigil">Č</div>
-  <span class="curtain-name">Črnilo Ink</span>
+  <span class="curtain-name">Črnilo Ink · Maribor</span>
   <div class="curtain-rule"></div>
 </div>
 
-<!-- cursors -->
+<!-- ── Cursor ───────────────────────────────────── -->
 <div class="cursor"     id="js-cursor"></div>
 <div class="cursor-dot" id="js-dot"></div>
 
-<!-- ─── HEADER ─────────────────────────────────────── -->
-<header class="header">
-  <div class="logo-block">
-    <div class="logo-sigil">Č</div>
-    <span class="logo-name">Črnilo Ink</span>
+<!-- ── Nav ──────────────────────────────────────── -->
+<nav class="nav">
+  <div class="mark">Secret <span style="font-family:var(--serif);font-style:italic;color:var(--gold);font-size:0.55em;vertical-align:0.2em">&amp;</span> Ink</div>
+  <div class="links">
+    <a href="#credo">Credo</a>
+    <a href="#studio">Studio</a>
+    <a href="#obred">Obred</a>
+    <a href="#zbirka">Zbirka</a>
+    <a href="#zapisi">Zapisi</a>
+    <a href="#narocanje">Kontakt</a>
+  </div>
+  <a href="#narocanje" class="nav-cta">Najava</a>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-smoke">
+    <div class="veil"></div>
+    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <filter id="smoke">
+          <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="3" seed="7"/>
+          <feDisplacementMap in="SourceGraphic" scale="55"/>
+        </filter>
+        <radialGradient id="g1">
+          <stop offset="0%"   stop-color="#a08862" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#a08862" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="600" cy="400" rx="520" ry="310" fill="url(#g1)" filter="url(#smoke)"/>
+    </svg>
   </div>
 
-  <nav>
-    <span class="nav-links" style="display:flex;gap:38px;align-items:center">
-      <a href="#studio">Studio</a>
-      <a href="#storitve">Storitve</a>
-      <a href="#galerija">Galerija</a>
-      <a href="#blog">Blog</a>
-      <a href="#kontakt">Kontakt</a>
-    </span>
-    <a href="#narocanje" class="nav-cta">Rezerviraj</a>
-  </nav>
+  <div class="hero-top reveal">
+    <span>Zasebni atelier · Maribor</span>
+    <span>N 46°33′ · E 15°38′</span>
+  </div>
+
+  <div class="hero-center">
+    <div class="estd reveal" style="--rd:200ms">— Zasebni tattoo salon —</div>
+    <h1 class="hero-title reveal" style="--rd:400ms">
+      Črnilo
+      <span class="amp">&amp;</span>
+      Koža
+    </h1>
+    <div class="hero-sub reveal" style="--rd:900ms">
+      Vsak motiv se najprej preveri. Šele nato dobi mesto na koži.
+    </div>
+  </div>
+
+  <div class="hero-bottom reveal" style="--rd:1300ms">
+    <div class="left">
+      Gosposka ulica 18<br>
+      <span style="opacity:.8">2000 Maribor</span>
+    </div>
+    <div class="center">
+      <div class="scroll">
+        <span>Vstopite</span>
+        <span class="bar"></span>
+      </div>
+    </div>
+    <div class="right">
+      Po dogovoru<br>
+      <span style="opacity:.8">Tor — Sob · 13:00 — 20:00</span>
+    </div>
+  </div>
 </header>
 
-<!-- ─── HERO ────────────────────────────────────────── -->
-<section class="hero">
-  <div class="hero-ambient"></div>
-  <div class="hero-ghost">I</div>
+<!-- ── I. Credo ──────────────────────────────────── -->
+<section id="credo" class="chamber">
+  <div class="section-marker"><span class="num">I.</span> Credo</div>
 
-  <p class="hero-label reveal" style="transition-delay:.15s">
-    Zasebni tattoo salon &middot; Maribor
-  </p>
-
-  <h1 class="hero-title reveal" style="transition-delay:.38s">
-    Črnilo kot<br>
-    <em>obred.</em>
-    Koža kot<br>zapis.
-  </h1>
-
-  <div class="hero-foot reveal" style="transition-delay:.65s">
-    <p class="hero-lead">
-      Črnilo Ink je zaseben studio za avtorske motive, temne ornamente, fine linije in prekrivanja. Vsak motiv se najprej preveri. Šele nato dobi mesto na koži.
+  <div class="manifesto">
+    <div class="eyebrow reveal">— Naša zaveza —</div>
+    <h2 class="reveal" style="--rd:200ms">
+      Tetovaža ni okras,<br>
+      temveč <em>tihi obred</em>,<br>
+      vrezan za vedno.
+    </h2>
+    <p class="lead reveal" style="--rd:500ms">
+      V Črnilo Ink ne sledimo trendom. Sprejemamo tiste, ki vedo, kaj nosijo.
+      Vsako srečanje je zaupanje, vsaka linija zaobljuba.
     </p>
-    <div class="hero-actions">
-      <a href="#narocanje" class="btn">Rezerviraj posvet</a>
-      <a href="#galerija"  class="btn btn-ghost">Poglej dela</a>
+
+    <div class="ornament reveal" style="--rd:700ms; margin-top: 60px;">
+      <span class="line r"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2v20M2 12h20"/>
+      </svg>
+      <span class="line"></span>
+    </div>
+  </div>
+
+  <div class="creeds reveal" style="--rd:900ms; margin-top: 100px;">
+    <div class="creed">
+      <div class="roman">— I —</div>
+      <h3>Zasebnost</h3>
+      <p>Vsak gost je obravnavan v tišini. Dela se ne objavljajo brez izrecnega dovoljenja. Studio je kapela, ne razstavni prostor.</p>
+    </div>
+    <div class="creed">
+      <div class="roman">— II —</div>
+      <h3>Namen</h3>
+      <p>Pred iglo prihaja pogovor. Motiv brez razloga je prazen. Vsaka linija mora prinesti svojo zgodbo in zdržati čas.</p>
+    </div>
+    <div class="creed">
+      <div class="roman">— III —</div>
+      <h3>Trajnost</h3>
+      <p>Nič, kar zapustimo skozi vrata, ni začasno. Linija je odločitev, ki jo nosite kot zaobljubo — zato jo skrbno premislimo.</p>
     </div>
   </div>
 </section>
 
-<!-- ─── MARQUEE ──────────────────────────────────────── -->
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-inner">
-    <span class="m-word">Posvet</span><span class="m-dot">·</span>
-    <span class="m-word">Igla</span><span class="m-dot">·</span>
-    <span class="m-word">Koža</span><span class="m-dot">·</span>
-    <span class="m-word">Črnilo</span><span class="m-dot">·</span>
-    <span class="m-word">Motiv</span><span class="m-dot">·</span>
-    <span class="m-word">Obred</span><span class="m-dot">·</span>
-    <span class="m-word">Zasebno</span><span class="m-dot">·</span>
-    <span class="m-word">Natančno</span><span class="m-dot">·</span>
-    <span class="m-word">Mirno</span><span class="m-dot">·</span>
-    <span class="m-word">Temno</span><span class="m-dot">·</span>
-    <span class="m-word">Posvet</span><span class="m-dot">·</span>
-    <span class="m-word">Igla</span><span class="m-dot">·</span>
-    <span class="m-word">Koža</span><span class="m-dot">·</span>
-    <span class="m-word">Črnilo</span><span class="m-dot">·</span>
-    <span class="m-word">Motiv</span><span class="m-dot">·</span>
-    <span class="m-word">Obred</span><span class="m-dot">·</span>
-    <span class="m-word">Zasebno</span><span class="m-dot">·</span>
-    <span class="m-word">Natančno</span><span class="m-dot">·</span>
-    <span class="m-word">Mirno</span><span class="m-dot">·</span>
-    <span class="m-word">Temno</span><span class="m-dot">·</span>
-  </div>
-</div>
+<!-- ── II. Studio ────────────────────────────────── -->
+<section id="studio" class="chamber">
+  <div class="section-marker"><span class="num">II.</span> Studio</div>
 
-<!-- ─── PILLARS ──────────────────────────────────────── -->
-<div class="pillars">
-  <article class="pillar reveal">
-    <span class="pillar-num">I</span>
-    <svg class="pillar-icon" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="18" cy="18" r="13" stroke="#a8833a" stroke-width="0.5"/>
-      <circle cx="18" cy="18" r="2" fill="#a8833a"/>
-      <line x1="18" y1="4"  x2="18" y2="8"  stroke="#a8833a" stroke-width="0.5"/>
-      <line x1="18" y1="28" x2="18" y2="32" stroke="#a8833a" stroke-width="0.5"/>
-      <line x1="4"  y1="18" x2="8"  y2="18" stroke="#a8833a" stroke-width="0.5"/>
-      <line x1="28" y1="18" x2="32" y2="18" stroke="#a8833a" stroke-width="0.5"/>
-    </svg>
-    <h3>Posvet</h3>
-    <p>Ideja se najprej razstavi. Motiv mora zdržati čas.</p>
-  </article>
-
-  <div class="pillar-sep"></div>
-
-  <article class="pillar reveal" style="transition-delay:.14s">
-    <span class="pillar-num">II</span>
-    <svg class="pillar-icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
-      <line x1="18" y1="3"  x2="18" y2="33" stroke="#a8833a" stroke-width="0.5"/>
-      <circle cx="18" cy="5" r="2" fill="#a8833a"/>
-      <path d="M14 30 L18 34 L22 30" stroke="#a8833a" stroke-width="0.5" fill="none"/>
-      <line x1="13" y1="13" x2="23" y2="13" stroke="#a8833a" stroke-width="0.5"/>
-      <line x1="15" y1="18" x2="21" y2="18" stroke="#a8833a" stroke-width="0.5"/>
-    </svg>
-    <h3>Igla</h3>
-    <p>Izvedba je mirna, sterilna in natančna.</p>
-  </article>
-
-  <div class="pillar-sep"></div>
-
-  <article class="pillar reveal" style="transition-delay:.28s">
-    <span class="pillar-num">III</span>
-    <svg class="pillar-icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
-      <rect x="7" y="7" width="22" height="22" stroke="#a8833a" stroke-width="0.5"/>
-      <rect x="11" y="11" width="14" height="14" stroke="#a8833a" stroke-width="0.3"/>
-      <circle cx="18" cy="18" r="2" fill="#a8833a"/>
-    </svg>
-    <h3>Koža</h3>
-    <p>Mesto na telesu je del kompozicije.</p>
-  </article>
-</div>
-
-<!-- ─── STUDIO ────────────────────────────────────────── -->
-<div class="orn-divider" aria-hidden="true">
-  <svg width="200" height="24" viewBox="0 0 200 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="0"   y1="12" x2="82"  y2="12" stroke="#c9a85c" stroke-width="0.5"/>
-    <line x1="118" y1="12" x2="200" y2="12" stroke="#c9a85c" stroke-width="0.5"/>
-    <circle cx="100" cy="12" r="5"  stroke="#c9a85c" stroke-width="0.5" fill="none"/>
-    <circle cx="100" cy="12" r="1.5" fill="#c9a85c"/>
-    <circle cx="86"  cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
-    <circle cx="114" cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
-    <line x1="90"  y1="8"  x2="90"  y2="16" stroke="#c9a85c" stroke-width="0.3"/>
-    <line x1="110" y1="8"  x2="110" y2="16" stroke="#c9a85c" stroke-width="0.3"/>
-  </svg>
-</div>
-
-<section class="section" id="studio">
-  <div class="section-ghost" aria-hidden="true">I</div>
-  <div class="section-inner">
-    <div class="reveal">
-      <span class="eyebrow">Studio</span>
-      <h2>Mir. <em>Tema.</em> Natančnost.</h2>
-    </div>
-
-    <div class="studio-split">
-      <div class="studio-frame reveal">
+  <div class="studio-grid">
+    <div class="studio-frame reveal-blur">
+      <div class="slot">
         <span>Fotografija studia</span>
       </div>
+    </div>
 
-      <div class="studio-text reveal" style="transition-delay:.2s">
-        <p>Studio je zasnovan kot zaseben prostor brez gneče in brez hitrih odločitev. Vsak obisk je termin, ne vrsta.</p>
-        <p>Motiv se obravnava kot del telesa, ne kot dekoracija. Pred iglo pride pogovor. Pred pogovorom pride ideja.</p>
-        <p>Vstop v studio ni naključen. Je odločitev.</p>
-      </div>
+    <div class="studio-info">
+      <h2 class="reveal">
+        Mir.
+        <em>— Tema. —</em>
+        Natančnost.
+      </h2>
+      <p class="reveal" style="--rd:200ms">
+        Studio je zasnovan kot zaseben prostor brez gneče in brez hitrih odločitev. Vsak obisk je termin, ne vrsta.
+      </p>
+      <p class="reveal" style="--rd:350ms">
+        Motiv se obravnava kot del telesa, ne kot dekoracija. Pred iglo pride pogovor. Pred pogovorom pride ideja.
+      </p>
+      <p class="reveal" style="--rd:500ms">
+        Vstop v studio ni naključen. Je odločitev.
+      </p>
     </div>
   </div>
 </section>
 
-<!-- ─── STORITVE ──────────────────────────────────────── -->
-<div class="orn-divider" aria-hidden="true">
-  <svg width="200" height="24" viewBox="0 0 200 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="0"   y1="12" x2="82"  y2="12" stroke="#c9a85c" stroke-width="0.5"/>
-    <line x1="118" y1="12" x2="200" y2="12" stroke="#c9a85c" stroke-width="0.5"/>
-    <circle cx="100" cy="12" r="5"  stroke="#c9a85c" stroke-width="0.5" fill="none"/>
-    <circle cx="100" cy="12" r="1.5" fill="#c9a85c"/>
-    <circle cx="86"  cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
-    <circle cx="114" cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
-    <line x1="90"  y1="8"  x2="90"  y2="16" stroke="#c9a85c" stroke-width="0.3"/>
-    <line x1="110" y1="8"  x2="110" y2="16" stroke="#c9a85c" stroke-width="0.3"/>
-  </svg>
-</div>
+<!-- ── III. Obred ────────────────────────────────── -->
+<section id="obred" class="chamber">
+  <div class="section-marker"><span class="num">III.</span> Obred</div>
 
-<section class="section c" id="storitve">
-  <div class="section-ghost" aria-hidden="true">II</div>
-  <div class="section-inner">
-    <div class="reveal">
-      <span class="eyebrow">Storitve</span>
-      <h2>Za motive, ki ne nastanejo <em>mimogrede.</em></h2>
-    </div>
-
-    <div class="cards">
-      <article class="card reveal">
-        <span class="card-num">I</span>
-        <h3>Fine line</h3>
-        <p>Diskretne linije, manjši motivi in natančna izvedba z občutkom za prostor na koži.</p>
-      </article>
-
-      <article class="card reveal" style="transition-delay:.12s">
-        <span class="card-num">II</span>
-        <h3>Blackwork</h3>
-        <p>Temni ornamenti, simboli in večji kosi z močnim vizualnim učinkom. Črna brez kompromisov.</p>
-      </article>
-
-      <article class="card reveal" style="transition-delay:.24s">
-        <span class="card-num">III</span>
-        <h3>Cover up</h3>
-        <p>Prekrivanje stare tetovaže po realni oceni kože, obstoječih linij in pigmenta.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ─── GALERIJA ──────────────────────────────────────── -->
-<div class="orn-divider" aria-hidden="true">
-  <svg width="200" height="24" viewBox="0 0 200 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="0"   y1="12" x2="82"  y2="12" stroke="#c9a85c" stroke-width="0.5"/>
-    <line x1="118" y1="12" x2="200" y2="12" stroke="#c9a85c" stroke-width="0.5"/>
-    <circle cx="100" cy="12" r="5"  stroke="#c9a85c" stroke-width="0.5" fill="none"/>
-    <circle cx="100" cy="12" r="1.5" fill="#c9a85c"/>
-    <circle cx="86"  cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
-    <circle cx="114" cy="12" r="2"  stroke="#c9a85c" stroke-width="0.4" fill="none"/>
-    <line x1="90"  y1="8"  x2="90"  y2="16" stroke="#c9a85c" stroke-width="0.3"/>
-    <line x1="110" y1="8"  x2="110" y2="16" stroke="#c9a85c" stroke-width="0.3"/>
-  </svg>
-</div>
-
-<section class="section c" id="galerija">
-  <div class="section-ghost" aria-hidden="true">III</div>
-  <div class="section-inner">
-    <div class="reveal">
-      <span class="eyebrow">Galerija</span>
-      <h2>Dela iz <em>studia.</em></h2>
-      <p class="section-text">
-        Fotografije dokončanih tetovaž se dodajo kot izbrana zbirka, ne kot množičen katalog. Vsak motiv mora imeti dovolj prostora.
+  <div class="ritual">
+    <div class="ritual-head">
+      <h2 class="reveal">
+        Obred
+        <em>— v petih dejanjih —</em>
+      </h2>
+      <p class="lead reveal" style="--rd:300ms">
+        Vsako srečanje sledi isti tihi koreografiji. Ne hitimo.
+        Igla je zadnji gib v dolgi vrsti odločitev.
       </p>
     </div>
 
-    <div class="gallery-void reveal" style="transition-delay:.2s">
-      <span>Galerija se polni</span>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="roman">— I —</div>
+        <div class="name">Povpraševanje</div>
+        <div class="desc">Opišite motiv, velikost v centimetrih, mesto na telesu in ali gre za novo tetovažo ali prekrivanje. Brez naglice.</div>
+        <div class="when">~ 5 min</div>
+      </div>
+      <div class="step reveal" style="--rd:100ms">
+        <div class="roman">— II —</div>
+        <div class="name">Posvet</div>
+        <div class="desc">Prejmete povabilo na pogovor. Pridete sami, brez naglice. V studiu idejo skupaj razstavimo, preden jo zgradimo.</div>
+        <div class="when">~ 60 min</div>
+      </div>
+      <div class="step reveal" style="--rd:200ms">
+        <div class="roman">— III —</div>
+        <div class="name">Risba</div>
+        <div class="desc">Skica se pripravi posebej za vas. Pokaže se le vam — in se pred terminom ne deli naprej. Motiv mora zdržati čas.</div>
+        <div class="when">1–2 tedna</div>
+      </div>
+      <div class="step reveal" style="--rd:300ms">
+        <div class="roman">— IV —</div>
+        <div class="name">Igla</div>
+        <div class="desc">Termin v studiu. Posvet, postavitev, igla. Brez prič, brez objav, brez naglice. Izvedba je mirna, sterilna in natančna.</div>
+        <div class="when">2–8 ur</div>
+      </div>
+      <div class="step reveal" style="--rd:400ms">
+        <div class="roman">— V —</div>
+        <div class="name">Nega</div>
+        <div class="desc">Po obredu prejmete navodila za nego. Dobra tetovaža zahteva skrb. Pomagamo pri vsakem vprašanju po posegu.</div>
+        <div class="when">trajno</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ─── BLOG ──────────────────────────────────────────── -->
-<section class="section" id="blog">
-  <div class="section-inner">
-    <div class="reveal">
-      <span class="eyebrow">Zapisi</span>
-      <h2>O črnilu, koži<br>in napačnih <em>odločitvah.</em></h2>
+<!-- ── IV. Zbirka ────────────────────────────────── -->
+<section id="zbirka" class="chamber">
+  <div class="section-marker"><span class="num">IV.</span> Zbirka</div>
+
+  <div class="gallery-head">
+    <div class="ornament reveal" style="margin-bottom: 32px;">
+      <span class="line r"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
+        <circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/>
+      </svg>
+      <span class="line"></span>
     </div>
+    <h2 class="display reveal" style="--rd:150ms">Iz studia.</h2>
+    <p class="reveal" style="--rd:300ms">Izbrana dela, deljena z dovoljenjem — vsako z dovolj prostora.</p>
+  </div>
 
-    <div class="cards" style="margin-top:60px">
-      <article class="card reveal">
-        <span class="card-num">I</span>
-        <h3>Nega</h3>
-        <p>Zakaj se dobra tetovaža lahko slabo zaceli in katere napake so najpogostejše.</p>
-      </article>
+  <div class="gallery">
+    <div class="plate p1 reveal-blur"><span class="tag">PL. I</span><span class="placeholder">— fine line —</span></div>
+    <div class="plate p2 reveal-blur" style="--rd:120ms"><span class="tag">PL. II</span><span class="placeholder">— blackwork —</span></div>
+    <div class="plate p3 reveal-blur" style="--rd:240ms"><span class="tag">PL. III</span><span class="placeholder">— cover up —</span></div>
+  </div>
+</section>
 
-      <article class="card reveal" style="transition-delay:.12s">
-        <span class="card-num">II</span>
-        <h3>Prvi motiv</h3>
-        <p>Kako izbrati motiv, ki bo imel smisel tudi čez nekaj let.</p>
-      </article>
+<!-- ── V. Zapisi ─────────────────────────────────── -->
+<section id="zapisi" class="chamber">
+  <div class="section-marker"><span class="num">V.</span> Zapisi</div>
 
-      <article class="card reveal" style="transition-delay:.24s">
-        <span class="card-num">III</span>
-        <h3>Prekrivanje</h3>
-        <p>Kdaj cover up ni najboljša rešitev in kdaj je najprej smiseln laser.</p>
-      </article>
+  <div class="manifesto" style="margin-bottom: 0;">
+    <div class="eyebrow reveal">— O črnilu in koži —</div>
+    <h2 class="reveal" style="--rd:200ms">
+      O napačnih <em>odločitvah</em><br>
+      in dobrem črnilu.
+    </h2>
+  </div>
+
+  <div class="blog-grid reveal" style="--rd:400ms;">
+    <div class="blog-card">
+      <div class="roman">— I —</div>
+      <h3>Nega</h3>
+      <p>Zakaj se dobra tetovaža lahko slabo zaceli in katere napake so najpogostejše po posegu.</p>
+    </div>
+    <div class="blog-card">
+      <div class="roman">— II —</div>
+      <h3>Prvi motiv</h3>
+      <p>Kako izbrati motiv, ki bo imel smisel tudi čez deset let. Preden je odločitev trajna.</p>
+    </div>
+    <div class="blog-card">
+      <div class="roman">— III —</div>
+      <h3>Prekrivanje</h3>
+      <p>Kdaj cover up ni najboljša rešitev in kdaj je pred iglo najprej smiseln laser.</p>
     </div>
   </div>
 </section>
 
-<!-- ─── NAROČANJE ─────────────────────────────────────── -->
-<section class="section c" id="narocanje">
-  <div class="section-inner">
-    <div class="reveal">
-      <span class="eyebrow">Naročanje</span>
-      <h2>Najprej povej <em>idejo.</em><br>Potem jo razstavimo.</h2>
-      <p class="section-text">
-        Opiši motiv, približno velikost v centimetrih, mesto na telesu in ali gre za novo tetovažo ali prekrivanje.
-      </p>
-    </div>
+<!-- ── VI. Naročanje ─────────────────────────────── -->
+<section id="narocanje" class="booking">
+  <div class="section-marker" style="color: var(--gold)"><span class="num">VI.</span> Najava</div>
+  <div class="booking-inner">
+    <div class="eyebrow reveal">— Pišite nam —</div>
+    <h2 class="reveal" style="--rd:200ms">
+      Najprej povej
+      <em>— idejo. —</em>
+    </h2>
+    <p class="lead reveal" style="--rd:400ms">
+      Opiši motiv, velikost, mesto na telesu in ali gre za novo tetovažo ali prekrivanje.
+      Potem jo skupaj razstavimo.
+    </p>
 
-    <form class="form reveal" style="transition-delay:.2s" onsubmit="return false">
-      <div class="field-row">
-        <label>Ime in priimek
-          <input type="text" required>
-        </label>
-        <label>E-pošta
-          <input type="email" required>
-        </label>
+    <form class="rite reveal" style="--rd:600ms" onsubmit="return false">
+      <div class="field">
+        <label>Ime</label>
+        <input type="text" placeholder="Vaše ime in priimek" required>
       </div>
-
-      <div class="field-row">
-        <label>Telefon
-          <input type="text">
-        </label>
-        <label>Storitev
-          <select>
-            <option>Prva tetovaža</option>
-            <option>Fine line</option>
-            <option>Blackwork</option>
-            <option>Cover up</option>
-            <option>Posvet</option>
-          </select>
-        </label>
+      <div class="field">
+        <label>E&#8209;pošta</label>
+        <input type="email" placeholder="vase@email.si" required>
       </div>
-
-      <label>Opis ideje
-        <textarea required></textarea>
-      </label>
-
-      <button class="form-submit" type="submit">Pošlji povpraševanje</button>
+      <div class="field">
+        <label>Telefon</label>
+        <input type="text" placeholder="Po izbiri">
+      </div>
+      <div class="field">
+        <label>Storitev</label>
+        <select>
+          <option>Prva tetovaža</option>
+          <option>Fine line</option>
+          <option>Blackwork</option>
+          <option>Cover up</option>
+          <option>Posvet</option>
+        </select>
+      </div>
+      <div class="field" style="align-items: start; padding-top: 32px;">
+        <label style="padding-top: 6px;">Ideja</label>
+        <textarea placeholder="Opišite motiv, velikost, mesto na telesu…" required></textarea>
+      </div>
+      <div class="submit-row">
+        <p class="note">Vsako povpraševanje preberemo osebno. Odgovorimo v roku dveh dni.</p>
+        <button type="submit" class="seal">Pošlji najavo</button>
+      </div>
     </form>
   </div>
 </section>
 
-<!-- ─── KONTAKT ───────────────────────────────────────── -->
-<section class="section" id="kontakt">
-  <div class="section-inner">
-    <div class="reveal">
-      <span class="eyebrow">Kontakt</span>
-      <h2>Vstop ni <em>naključen.</em></h2>
-    </div>
-
-    <dl class="contact-grid reveal" style="transition-delay:.2s">
-      <div class="contact-cell">
-        <dt>Naslov</dt>
-        <dd>Gosposka ulica 18<br>2000 Maribor</dd>
-      </div>
-      <div class="contact-cell">
-        <dt>Elektronska pošta</dt>
-        <dd>info@crniloink.si</dd>
-      </div>
-      <div class="contact-cell">
-        <dt>Telefon</dt>
-        <dd>02 555 18 44</dd>
-      </div>
-    </dl>
-  </div>
-</section>
-
-<!-- ─── FOOTER ────────────────────────────────────────── -->
+<!-- ── Footer ────────────────────────────────────── -->
 <footer>
-  <span class="footer-copy">Črnilo Ink &middot; Maribor &middot; Zaseben tattoo salon</span>
-  <div class="footer-sigil">Č</div>
+  <div class="foot-grid">
+    <div>
+      <div class="mast">Črnilo Ink</div>
+      <p class="motto">— Zasebni tattoo atelier. Maribor. —</p>
+    </div>
+    <div>
+      <h4>Atelier</h4>
+      <ul>
+        <li>Gosposka ulica 18</li>
+        <li>2000 Maribor</li>
+        <li>Slovenija</li>
+        <li style="margin-top:10px; opacity:.8">Po dogovoru.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Stik</h4>
+      <ul>
+        <li><a href="mailto:info@crniloink.si">info@crniloink.si</a></li>
+        <li><a href="tel:025551844">02 555 18 44</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Storitve</h4>
+      <ul>
+        <li>Fine line</li>
+        <li>Blackwork</li>
+        <li>Cover up</li>
+        <li>Posvet</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>Črnilo Ink · Maribor · Zasebni tattoo salon</span>
+    <div class="foot-seal">Č</div>
+    <span>© MMXXVI</span>
+  </div>
 </footer>
 
 <script>
-/* ── Theatrical curtain ────────────────────────────── */
+/* ── Curtain ────────────────────────────────────── */
 const curtain = document.getElementById('curtain');
 if (curtain) {
-  // show contents
   requestAnimationFrame(() => curtain.classList.add('loaded'));
-  // lift after delay
-  setTimeout(() => curtain.classList.add('open'), 1800);
+  setTimeout(() => curtain.classList.add('open'), 2000);
 }
 
-/* ── Hero ghost parallax ───────────────────────────── */
-const ghost = document.querySelector('.hero-ghost');
-if (ghost) {
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    ghost.style.transform = `translateY(calc(-50% + ${y * 0.22}px))`;
-    ghost.style.opacity = Math.max(0, 0.018 - y * 0.00004);
-  }, { passive: true });
-}
-
-/* ── Custom cursor ─────────────────────────────────── */
+/* ── Custom cursor ──────────────────────────────── */
 const cur = document.getElementById('js-cursor');
 const dot = document.getElementById('js-dot');
 let mx = 0, my = 0, cx = 0, cy = 0;
-
 document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
 (function loop() {
   cx += (mx - cx) * 0.13;
   cy += (my - cy) * 0.13;
@@ -1281,28 +991,33 @@ document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; })
   if (dot) dot.style.transform = `translate(${mx - 1}px,${my - 1}px)`;
   requestAnimationFrame(loop);
 })();
-
-document.querySelectorAll('a, button, .card, .pillar').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    if (cur) { cur.style.width = '26px'; cur.style.height = '26px'; }
-  });
-  el.addEventListener('mouseleave', () => {
-    if (cur) { cur.style.width = '10px'; cur.style.height = '10px'; }
-  });
+document.querySelectorAll('a, button, .creed, .blog-card, .step, .plate').forEach(el => {
+  el.addEventListener('mouseenter', () => { if (cur) { cur.style.width = '26px'; cur.style.height = '26px'; } });
+  el.addEventListener('mouseleave', () => { if (cur) { cur.style.width = '10px'; cur.style.height = '10px'; } });
 });
 
-/* ── Scroll reveal ─────────────────────────────────── */
+/* ── Live clock ─────────────────────────────────── */
+const clockEl = document.querySelector('[data-clock]');
+if (clockEl) {
+  const tick = () => {
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    const ss = String(d.getSeconds()).padStart(2,'0');
+    clockEl.textContent = `${hh}:${mm}:${ss}`;
+  };
+  tick(); setInterval(tick, 1000);
+}
+
+/* ── Scroll reveal ──────────────────────────────── */
 const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-in'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal, .reveal-blur').forEach(el => obs.observe(el));
 
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-/* hero fires immediately */
 setTimeout(() => {
-  document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
-}, 60);
+  document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('is-in'));
+}, 80);
 </script>
-
 </body>
 </html>
